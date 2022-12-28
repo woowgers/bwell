@@ -9,4 +9,3 @@ def register():
 @bp.route('/login/')
 def login():
     ...
-
