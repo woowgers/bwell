@@ -1,7 +1,7 @@
-#!/bin/sh
+#!/bin/bash
 
 if (( $# == 0 )); then
   flask --app src/app --debug run
 else
-  flask --app src/app --debug $@
+  flask --app src/app --debug "$@"
 fi

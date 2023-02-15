@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, request
+from werkzeug.wrappers import Response
 
 from helpers.flashes import flash_error
 from helpers.authority import admin_rights_required
@@ -40,7 +41,7 @@ def create():
     return redirect(url_for("manufacturers.read"))
 
 
-@bp.delete("/<int:manufacturer_id>")
+@bp.post("/<int:manufacturer_id>/delete")
 def delete(manufacturer_id: int):
     try:
         db_delete_manufacturer(db, manufacturer_id)
