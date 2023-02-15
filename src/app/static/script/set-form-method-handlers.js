@@ -10,19 +10,20 @@ function set_form_method_handlers()
     if (form_method != "GET" && form_method != "POST" && form_method != "HEAD")
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
-        return await fetch(
+        fetch(
           form_action,
           {
             method: form_method,
-            redirect: 'manual',
             headers: {
-              'Content-Type': 'application/json'
+              'Content-Type': 'multipart/form-data',
             },
-            body: new FormData
+            body: new FormData(form),
           }
-        ).then(response => response.url);
+        ).then(response => console.info(response));
       });
   }
 }
 
-set_form_method_handlers();
+window.addEventListener('load', () => {
+  set_form_method_handlers();
+});

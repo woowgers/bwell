@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, request
+import click
 
 from helpers.flashes import flash_error
 from helpers.authority import admin_rights_required
@@ -42,9 +43,12 @@ def create():
 
 @bp.delete("/<int:manufacturer_id>")
 def delete(manufacturer_id: int):
+    click.echo(request.headers)
+
     try:
         db_delete_manufacturer(db, manufacturer_id)
     except ModelError as error:
         flash_error(error)
 
-    return redirect(url_for("manufacturers.read"))
+    return ''
+    # return redirect(url_for("manufacturers.read"))
