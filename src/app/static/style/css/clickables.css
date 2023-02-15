@@ -1,0 +1,58 @@
+a {
+  text-decoration: None; }
+  a:hover, a:focus {
+    text-decoration: 0.08em DarkGreen Wavy Underline; }
+  a:focus {
+    outline: 2px solid #a6b1e1;
+    border-radius: 0.2em; }
+
+button, input[type=submit] {
+  background-color: #e5e6e4;
+  transition: background-color 100ms; }
+  button:hover, button:focus, input[type=submit]:hover, input[type=submit]:focus {
+    cursor: pointer;
+    background-color: #c4cbc5; }
+
+input:not([type=submit]) {
+  padding-left: 1em;
+  padding-right: 1em; }
+  input:not([type=submit]):hover {
+    cursor: text; }
+
+input[type=date] {
+  text-align: center; }
+
+input:disabled {
+  background-color: DarkGrey;
+  color: LightGrey; }
+  input:disabled:hover {
+    cursor: Not-Allowed;
+    background-color: DarkGrey; }
+
+select:focus, input:not([type=submit]):focus {
+  outline: None;
+  box-shadow: inset 0 0 10px 1px #a6b1e1; }
+
+option {
+  font-style: Italic; }
+  option:checked {
+    background-color: #a6b1e1; }
+  option:focus {
+    background-color: #a6b1e1; }
+  option:hover {
+    box-shadow: 0 0 10px 100px orange inset; }
+
+select, input, button {
+  position: relative;
+  border: 2px solid DarkGrey;
+  margin: 0; }
+  select:hover, input:hover, button:hover {
+    cursor: pointer; }
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  background: rgba(148, 0, 211, 0.3); }
+
+/*# sourceMappingURL=clickables.css.map */

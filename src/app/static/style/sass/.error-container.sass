@@ -1,0 +1,52 @@
+#error-container
+  z-index: 1000
+  position: fixed
+  top: 0px
+  left: 0px
+  width: 100vw
+  height: 100vh
+  overflow-y: auto
+
+  backdrop-filter: blur(2px)
+
+  display: flex
+  flex-direction: column
+  justify-content: center
+  align-items: center
+  padding: 5em
+  background: rgba(20, 20, 20, 0.6)
+
+  transition: opacity 200ms ease-in
+
+  button
+    font-size: 2em
+    padding: 0.2em 1em
+    border: 2px solid
+    border-radius: 0.5em
+    background: LightGrey
+    transition: background 100ms
+    margin-top: 1em
+    font-weight: Bold
+
+  .error-item
+    display: inline-block
+    margin-top: 0.5em
+    padding: 0.5em 1.2em
+    border: 2px solid Red
+    border-radius: 0.8em
+    text-align: left
+    padding-left: 3em
+    background-color: #ffd0d7
+
+    color: DarkRed
+    font-size: 2em
+    font-weight: Bold
+    font-family: Monospace
+
+    i
+      position: relative
+      left: -1.5em
+      transform: scale(150%)
+      color: Crimson
+
+

@@ -1,0 +1,81 @@
+@import 'colors.sass'
+
+
+$border-radius: 0.5em
+$border-radius-child: calc(0.5em - 1px)
+
+
+table
+  border: none
+  border-spacing: 0
+  margin-bottom: 2em
+  border-radius: $border-radius
+  box-shadow: 0 0 2px $hookers-green
+  font-size: 1em
+  white-space: nowrap
+
+  td > *
+    font-size: 1em
+    height: 2em
+    width: 100%
+    *
+      font-size: 1em
+      height: 2em
+      width: 100%
+
+  form,form > *
+    font-size: 1em
+    height: 2em
+    width: 100%
+
+  td > *:not(form),form > *
+    padding: 0.2em
+
+
+td > *
+  height: 100%
+  font-size: 1em
+
+th
+  padding: 0.2em
+  background-color: rgb(192, 198, 204)
+  font-weight: bold
+
+td
+  background-color: rgb(228, 236, 242)
+
+th,td
+  border: 1px solid SlateGrey
+
+td:first-child
+  text-align: center
+  background-color: rgb(192, 198, 204)
+  font-weight: bold
+
+tr:first-child
+  th,td
+    &:first-child
+      border-top-left-radius: $border-radius
+      input,button,select
+        border-top-left-radius: $border-radius-child
+
+tr:first-child
+  th,td
+    &:last-child
+      border-top-right-radius: $border-radius
+      input,button,select
+        border-top-right-radius: $border-radius-child
+
+tr:last-child
+  th,td
+    &:first-child
+      border-bottom-left-radius: $border-radius
+      input,button,select
+        border-bottom-left-radius: $border-radius-child
+
+tr:last-child
+  th,td
+    &:last-child
+      border-bottom-right-radius: $border-radius
+      input,button,select
+        border-bottom-right-radius: $border-radius-child

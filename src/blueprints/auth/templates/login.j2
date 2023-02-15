@@ -1,0 +1,27 @@
+{% extends 'base.j2' %}
+{% block title %} Log In {% endblock %}
+{% block content %}
+
+  <h2> Log In </h2>
+
+  <form method="POST" action="{{ url_for('auth.login') }}">
+    <table>
+      <tr>
+        <td> <label for=email> Email </label> </td>
+        <td> <input name=email type=email> </td>
+      </tr>
+
+      <tr>
+        <td> <label for=password> Password </label> </td>
+        <td> <input name=password type="password"> </td>
+      </tr>
+      <tr>
+        <td></td>
+        <td> <input type=submit value="Log In"> </td>
+      </tr>
+    </table>
+  </form>
+
+  <h5> <a href="{{ url_for('auth.register') }}"> Don't have an account? </a> </h5>
+
+{% endblock %}

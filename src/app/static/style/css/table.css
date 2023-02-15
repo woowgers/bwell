@@ -1,0 +1,64 @@
+table {
+  border: none;
+  border-spacing: 0;
+  margin-bottom: 2em;
+  border-radius: 0.5em;
+  box-shadow: 0 0 2px #5f7875;
+  font-size: 1em;
+  white-space: nowrap; }
+  table td > * {
+    font-size: 1em;
+    height: 2em;
+    width: 100%; }
+    table td > * * {
+      font-size: 1em;
+      height: 2em;
+      width: 100%; }
+  table form, table form > * {
+    font-size: 1em;
+    height: 2em;
+    width: 100%; }
+  table td > *:not(form), table form > * {
+    padding: 0.2em; }
+
+td > * {
+  height: 100%;
+  font-size: 1em; }
+
+th {
+  padding: 0.2em;
+  background-color: #c0c6cc;
+  font-weight: bold; }
+
+td {
+  background-color: #e4ecf2; }
+
+th, td {
+  border: 1px solid SlateGrey; }
+
+td:first-child {
+  text-align: center;
+  background-color: #c0c6cc;
+  font-weight: bold; }
+
+tr:first-child th:first-child, tr:first-child td:first-child {
+  border-top-left-radius: 0.5em; }
+  tr:first-child th:first-child input, tr:first-child th:first-child button, tr:first-child th:first-child select, tr:first-child td:first-child input, tr:first-child td:first-child button, tr:first-child td:first-child select {
+    border-top-left-radius: calc(0.5em - 1px); }
+
+tr:first-child th:last-child, tr:first-child td:last-child {
+  border-top-right-radius: 0.5em; }
+  tr:first-child th:last-child input, tr:first-child th:last-child button, tr:first-child th:last-child select, tr:first-child td:last-child input, tr:first-child td:last-child button, tr:first-child td:last-child select {
+    border-top-right-radius: calc(0.5em - 1px); }
+
+tr:last-child th:first-child, tr:last-child td:first-child {
+  border-bottom-left-radius: 0.5em; }
+  tr:last-child th:first-child input, tr:last-child th:first-child button, tr:last-child th:first-child select, tr:last-child td:first-child input, tr:last-child td:first-child button, tr:last-child td:first-child select {
+    border-bottom-left-radius: calc(0.5em - 1px); }
+
+tr:last-child th:last-child, tr:last-child td:last-child {
+  border-bottom-right-radius: 0.5em; }
+  tr:last-child th:last-child input, tr:last-child th:last-child button, tr:last-child th:last-child select, tr:last-child td:last-child input, tr:last-child td:last-child button, tr:last-child td:last-child select {
+    border-bottom-right-radius: calc(0.5em - 1px); }
+
+/*# sourceMappingURL=table.css.map */

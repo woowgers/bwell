@@ -1,0 +1,27 @@
+{% block cart_content %}
+  {% if items|length > 0 %}
+    <table>
+        <tr>
+            <th> <p> ID </th>
+            <th> <p> Drug group </th>
+            <th> <p> Cipher </th>
+            <th> <p> Name </th>
+            <th> <p> Manufacturer </th>
+            <th> <p> Price </th>
+        </tr>
+        <tr>
+            {% for item in items %}
+                {{ itemitem_id }}
+                {{ itemdrug_id }}
+                {{ itemdrug_group }}
+                {{ itemdrug_cipher }}
+                {{ itemdrug_name }}
+                {{ itemdrug_manufacturer }}
+                {{ itemprice }}
+            {% endfor %}
+        </tr>
+    </table>
+  {% else %}
+    <h3> There's nothing in your cart currently. </h3>
+  {% endif %}
+{% endblock %}

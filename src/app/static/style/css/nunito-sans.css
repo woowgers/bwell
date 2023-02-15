@@ -1,0 +1,32 @@
+@font-face {
+  font-family: nunito-sans;
+  font-style: normal;
+  font-weight: lighter;
+  src: url("../font/nunito-sans/NunitoSans-Light.ttf"); }
+@font-face {
+  font-family: nunito-sans;
+  font-style: normal;
+  font-weight: normal;
+  src: url("../font/nunito-sans/NunitoSans-Regular.ttf"); }
+@font-face {
+  font-family: nunito-sans;
+  font-style: normal;
+  font-weight: bold;
+  src: url("../font/nunito-sans/NunitoSans-Bold.ttf"); }
+@font-face {
+  font-family: nunito-sans;
+  font-style: italic;
+  font-weight: lighter;
+  src: url("../font/nunito-sans/nunitosans-LightItalic.ttf"); }
+@font-face {
+  font-family: nunito-sans;
+  font-style: italic;
+  font-weight: normal;
+  src: url("../font/nunito-sans/NunitoSans-Italic.ttf"); }
+@font-face {
+  font-family: nunito-sans;
+  font-style: italic;
+  font-weight: bold;
+  src: url("../font/nunito-sans/NunitoSans-SemiBoldItalic.ttf"); }
+
+/*# sourceMappingURL=nunito-sans.css.map */

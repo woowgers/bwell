@@ -1,0 +1,70 @@
+{% extends 'base.j2' %}
+{% block title %} Drugs {% endblock %}
+{% block content %}
+  <h1> Drugs </h1>
+  <form method=POST action={{ url_for('drugs.post') }}>
+    <h3> Add drug </h3>
+    <table>
+      <tr>
+        <th> Manufacturer </th>
+        <th> Cipher </th>
+        <th> Drug group </th>
+        <th> Name </th>
+        <th>  </th>
+      </tr>
+      <tr>
+          <td> <input name=manufacturer-name type=text list="manufacturers-list" autocomplete=off> </td>
+          <td> <input name=cipher type=text autocomplete=off list="cipher-datalist"> </td>
+          <td> <input name=drug-group-name type=text list="drug-group-list" autocomplete=off> </td>
+          <td> <input name=drug-name type=text autocomplete=off list=drug-name-list> </td>
+          <td> <input type=submit value="Add"> </td>
+          <datalist id=manufacturers-list>
+            {% for manufacturer in manufacturers %}
+              <option value="{{ manufacturer.name }}">
+                {{ manufacturer.name }}
+              </option>
+            {% endfor %}
+          </datalist>
+          <datalist id=drug-group-list>
+            {% for drug_group in drug_groups %}
+              <option value={{ drug_group.name }}>
+            {% endfor %}
+          </datalist>
+          <datalist id=drug-name-list>
+            {% for drug_name in drug_names %}
+              <option value={{ drug_name }}>
+            {% endfor %}
+          </datalist>
+      </tr>
+    </table>
+  </form>
+  <h3> Existing drugs </h3>
+  {% if drugs|length > 0 %}
+    <table>
+      <tr>
+        <th> <p> ID </th>
+        <th> <p> Drug group </th>
+        <th> <p> Cipher </th>
+        <th> <p> Name </th>
+        <th> <p> Manufacturer </th>
+        <th></th>
+      </tr>
+      {% for drug in drugs %}
+        <form method=DELETE action={{ url_for("drugs.delete_drug", drug_id=drug.drug_id) }}>
+          <tr>
+            <td> <p> {{ drug.drug_id }} </td>
+            <td> <p> {{ drug.drug_group }} </td>
+            <td> <input readonly value="{{ drug.cipher }}"> </td>
+            <td> <p> {{ drug.name }} </td>
+            <td> <p> {{ drug.manufacturer }} </td>
+            <td>
+                <input type=submit value=Delete>
+            </td>
+          </tr>
+        </form>
+      {% endfor %}
+    </table>
+  {% else %}
+    <h3> There are no drugs currently. <h3>
+  {% endif %}
+{% endblock %}

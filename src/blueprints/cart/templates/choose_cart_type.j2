@@ -1,0 +1,9 @@
+{% extends 'base.j2' %}
+{% block title %} Choose cart type {% endblock %}
+{% block content %}
+    <h1> Choose cart type: </h1>
+    <ul>
+        <li> <a href="{{ url_for('cart.admin') }}"> Admin's cart </a> </li>
+        <li> <a href="{{ url_for('cart.customer') }}"> Customer's cart </a> </li>
+    </ul>
+{% endblock %}

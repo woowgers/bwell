@@ -1,0 +1,12 @@
+form td > * {
+  height: 2em;
+  padding: 0.4em; }
+form label {
+  display: Block;
+  text-align: Right;
+  font-style: Italic;
+  font-weight: Bold; }
+  form label:hover {
+    cursor: Text; }
+
+/*# sourceMappingURL=form.css.map */

@@ -1,0 +1,34 @@
+{% extends 'base.j2' %}
+{% block title %} Accounts {% endblock %}
+{% block content %}
+  <h1> Users </h1>
+  {% if users|length > 0 %}
+    <h3> Existing users </h3>
+    <table>
+      <tr>
+        <th> <p> ID </th>
+        <th> <p> Type </th>
+        <th> <p> Name </th>
+        <th> <p> E-Mail </th>
+        <th> <p> Password hash </th>
+        <th> </th>
+      </tr>
+        {% for _user in users %}
+          <tr>
+            <td> <p> {{ _user.user_id }} </td>
+            <td> <p> {{ _user.type }} </td>
+            <td> <p> {{ _user.name }} </td>
+            <td> <p> {{ _user.email }} </td>
+            <td> <input type=text readonly value={{ _user.pw_hash }}> </td>
+            <td>
+                <form method=POST action={{ url_for('account.delete_account', user_id=_user.user_id) }}>
+                  <input type=submit value="Delete user">
+                </form>
+            </td>
+          </tr>
+        {% endfor %}
+    </table>
+  {% else %}
+    <h3> There are no users currently. </h3>
+  {% endif %}
+{% endblock %}

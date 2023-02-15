@@ -1,0 +1,9 @@
+{% extends 'base.j2' %}
+{% block title %} Pharmacy {% endblock %}
+{% block content %}
+  <h1> Drugs in pharmacy </h1>
+  {% if items|length > 0 %}
+  {% else %}
+    <h3> There are no drugs currently. </h3>
+  {% endif %}
+{% endblock %}

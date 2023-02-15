@@ -1,0 +1,31 @@
+nav {
+  z-index: 100;
+  display: inline-flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  width: 100%;
+  border-box: content-box;
+  background-color: LightBlue;
+  line-height: 1em;
+  box-shadow: 0 0 5px black; }
+  nav #navbar-spacer {
+    flex-grow: 1; }
+  nav #navbar-logout-button i {
+    transform: scaleX(1.1) scaleY(1.1); }
+  nav a {
+    color: MidnightBlue;
+    padding: 0.5em;
+    text-decoration: none;
+    transition: backdrop-filter 100ms;
+    cursor: pointer; }
+    nav a:hover, nav a:focus {
+      text-decoration: 0.08em DarkGreen Wavy Underline;
+      backdrop-filter: brightness(90%); }
+  nav #logo-link img {
+    display: inline-block;
+    height: 0.8em;
+    width: 0.8em;
+    transform: scaleX(1.7) scaleY(1.7);
+    z-index: 0; }
+
+/*# sourceMappingURL=navbar.css.map */

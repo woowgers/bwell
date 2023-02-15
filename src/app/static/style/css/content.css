@@ -1,0 +1,15 @@
+#content-container {
+  z-index: 50;
+  flex-grow: 3;
+  overflow-y: auto;
+  padding: 1em 2em;
+  background-color: AliceBlue; }
+  #content-container ul {
+    display: inline-block;
+    width: max-content;
+    padding: 1em;
+    list-style-type: "-  "; }
+    #content-container ul li {
+      margin-top: 0.4em; }
+
+/*# sourceMappingURL=content.css.map */

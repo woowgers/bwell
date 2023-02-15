@@ -1,0 +1,48 @@
+{% extends 'base.j2' %}
+{% block title %} Register {% endblock %}
+{% block content %}
+  <h2> Register a new user </h2>
+  <form method="POST" action="{{ url_for('auth.register') }}">
+    <table>
+      {% if user.is_admin %}
+        <tr>
+          <td> <label for=user-type> User type </label> </td>
+          <td>
+              <select name=user-type>
+                <option name="{{ UserType.CUSTOMER.value }}" value="{{ UserType.CUSTOMER.value }}"> Customer </option>
+                <option name="{{ UserType.CASHIER.value }}" value="{{ UserType.CASHIER.value }}"> Cashier </option>
+                <option name="{{ UserType.ADMIN.value }}" value="{{ UserType.ADMIN.value }}"> Administrator </option>
+              </select>
+            </div>
+          </td>
+        </tr>
+      {% else %}
+          <input name=user-type value={{ UserType.CUSTOMER.value }} type=hidden>
+      {% endif %}
+      <tr>
+        <td> <label for=email> Email </label> </td>
+        <td> <input name=email type=email /> </td>
+      </tr>
+      <tr>
+        <td> <label for=username> Username </label> </td>
+        <td> <input name=username type=text></input> </td>
+      </tr>
+      <tr>
+        <td> <label for=password> Password </label> </td>
+        <td> <input name=password type="password"/> </td>
+      </tr>
+      <tr>
+        <td> <label for=repeat-password> Repeat password </label> </td>
+        <td> <input name=repeat-password type="password"/> </td>
+      </tr>
+      <tr>
+        <td></td>
+        <td> <input type=submit value="Register"/> </td>
+      </tr>
+    </table>
+  </form>
+  <h5>
+  <a href="{{ url_for('auth.login') }}"> Already have an account? </a>
+  </h5>
+
+{% endblock %}

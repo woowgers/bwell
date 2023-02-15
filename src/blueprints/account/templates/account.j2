@@ -1,0 +1,39 @@
+{% extends 'base.j2' %}
+{% block title %} Account {% endblock %}
+{% block content %}
+
+  {% if user %}
+    <h1> {{ apostrophe_appended(user.name) }} account </h1>
+    <table>
+      <tr>
+        <td> <p> ID </td>
+        <td> <p> {{ user.user_id }} </td>
+      </tr>
+      <tr>
+        <td> <p> Type </td>
+        <td> <p> {{ user.type }} </td>
+      </tr>
+      <tr>
+        <td> <p> E-Mail </td>
+        <td> <p> {{ user.email }} </td>
+      </tr>
+      <tr>
+        <td> <p> Name </td>
+        <td> <p> {{ user.name }} </td>
+      </tr>
+      <tr>
+        <td> <p> Password hash </td>
+        <td> <input type=text readonly value="{{ user.pw_hash }}"> </td>
+      </tr>
+    </table>
+    <form method="POST" action="{{ url_for("account.logout") }}">
+        <input type=submit value="Log out" />
+    </form>
+    <form method="POST" action="{{ url_for("account.delete_account", user_id=user.user_id) }}">
+        <input type=submit value="Delete my account" />
+    </form>
+  {% else %}
+    <h1> Could not find specified user page </h1>
+  {% endif %}
+
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends 'base.j2' %}
+{% block title %} Vendors {% endblock %}
+{% block content %}
+  <h1> Vendors </h1>
+  <form method=POST action="{{ url_for('vendors.read') }}">
+    <h3> Add vendor </h3>
+    <table>
+      <tr>
+        <th> <p> Cipher </th>
+        <th> <p> Company </th>
+        <th> <p> City </th>
+        <th> <p> Agreement conclusion date </th>
+        <th></th>
+      </tr>
+      <tr>
+        <td> <input name=cipher type=text autocomplete=off list="cipher-datalist"> </td>
+        <td> <input name=company-name type=text autocomplete=off> </td>
+        <td> <input name=city-name type=text list="cities-datalist" autocomplete=off> </td>
+        <td> <input type=date name=agreement-conclusion-date> </td>
+        <td> <input type=submit value=Add> </td>
+      </tr>
+    </table>
+    <datalist id=cities-datalist>
+        {% for city in cities %}
+            <option value={{ city.name }}>
+        {% endfor %}
+    </datalist>
+  </form>
+  {% if vendors|length > 0 %}
+    <h3>Existing vendors</h3>
+    <table>
+        <tr>
+          <th> <p> ID </th>
+          <th> <p> Cipher </th>
+          <th> <p> Company </th>
+          <th> <p> City </th>
+          <th> <p> Agreement Conclusion </th>
+          <th colspan=2> <p> Agreement Termination </th>
+          <th> </th>
+        </tr>
+        {% for vendor in vendors %}
+          <tr>
+            <td> <p> {{ vendor.vendor_id }} </td>
+            <td> <input type=text readonly value={{ vendor.cipher }}> </td>
+            <td> <p> <a href="{{ url_for('vendors.items', vendor_id=vendor.vendor_id) }}">{{ vendor.company_name }} </a> </td>
+            <td> <p> {{ vendor.city_name }} </td>
+            <td> <p> {{ vendor.conclusion_date }} </td>
+            <form method=POST action="{{ url_for('vendors.terminate_agreement') }}">
+            <input name=vendor-id type=hidden value={{ vendor.vendor_id }}>
+              {% if not vendor.termination_date %}
+                <td>
+                  <input type=date name=termination-date>
+                </td>
+              {% else %}
+                <td>
+                  <input type=date name=termination-date readonly value={{ vendor.termination_date }}>
+                </td>
+              {% endif %}
+                <td>
+                  <input type=submit value="Terminate agreement">
+                </td>
+            </form>
+            <td>
+              <form method=POST action="{{ url_for('vendors.delete_vendor', vendor_id=vendor.vendor_id) }}">
+                <input type=submit value="Delete">
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+      <h3> There are no vendors currently. </h3>
+    {% endif %}
+{% endblock %}

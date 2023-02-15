@@ -1,0 +1,19 @@
+h1 {
+  margin: 0.5em 0 1em 0; }
+
+h2, h3, h4 {
+  margin: 0.4em 0; }
+
+h2:not(.first-child) {
+  margin-top: 2em; }
+
+h2 {
+  color: DimGray;
+  font-style: Italic;
+  font-weight: Bold;
+  padding: 0.5em;
+  border-bottom: 2px solid #e2e6f0;
+  border-bottom-right-radius: 0.5em;
+  border-bottom-left-radius: 0.5em; }
+
+/*# sourceMappingURL=headers.css.map */
