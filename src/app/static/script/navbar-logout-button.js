@@ -1,6 +1,11 @@
 import { on_event, logout } from "./helpers.js";
 
-(function(){
+
+function main()
+{
   let logout_button = document.getElementById("navbar-logout-button");
-  logout_button.addEventListener('click', on_event(logout, null));
-})();
+  if (logout_button != null)
+    logout_button.addEventListener('click', on_event(logout, null));
+}
+
+main();
