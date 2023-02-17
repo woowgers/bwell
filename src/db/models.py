@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import date
+import datetime
 from enum import Enum
 import typing as t
 
@@ -46,8 +46,14 @@ class City:
 @dataclass
 class Manufacturer:
     manufacturer_id: int
-    country_name: str
+    country: Country
     name: str
+
+    @classmethod
+    def from_primitives(
+        cls, manufacturer_id: int, country_id: int, country_name: str, name: str
+    ) -> "Manufacturer":
+        return cls(manufacturer_id, Country(country_id, country_name), name)
 
 
 @dataclass
@@ -55,9 +61,29 @@ class Vendor:
     vendor_id: int
     cipher: str
     company_name: str
-    city_name: str
-    conclusion_date: date
-    termination_date: t.Optional[date]
+    city: City
+    conclusion_date: datetime.date
+    termination_date: t.Optional[datetime.date]
+
+    @classmethod
+    def from_primitives(
+        cls,
+        vendor_id: int,
+        cipher: str,
+        company_name: str,
+        city_id: int,
+        city_name: str,
+        conclusion_date: datetime.date,
+        termination_date: t.Optional[datetime.date],
+    ) -> "Vendor":
+        return cls(
+            vendor_id,
+            cipher,
+            company_name,
+            City(city_id, city_name),
+            conclusion_date,
+            termination_date,
+        )
 
 
 @dataclass
@@ -69,30 +95,77 @@ class DrugGroup:
 @dataclass
 class Drug:
     drug_id: int
-    drug_group: str
+    drug_group: DrugGroup
     cipher: str
     name: str
-    manufacturer: str
+    manufacturer: Manufacturer
+
+    @classmethod
+    def from_primitives(
+        cls,
+        drug_id: int,
+        drug_group_id: int,
+        drug_group_name: str,
+        cipher: str,
+        name: str,
+        mf_id: int,
+        mf_country_id: int,
+        mf_country_name: str,
+        mf_name: str,
+    ):
+        return Drug(
+            drug_id,
+            DrugGroup(drug_group_id, drug_group_name),
+            cipher,
+            name,
+            Manufacturer.from_primitives(
+                mf_id, mf_country_id, mf_country_name, mf_name
+            ),
+        )
 
 
 @dataclass
 class Item:
     item_id: int
-    drug_id: int
-    drug_group: str
-    drug_cipher: str
-    drug_name: str
-    drug_manufacturer: str
-    price: int
+    drug: Drug
+    price: float
+
+    @classmethod
+    def from_primitives(
+        cls,
+        item_id: int,
+        drug_id: int,
+        drug_group_id: int,
+        drug_group_name: str,
+        drug_cipher: str,
+        drug_name: str,
+        drug_mf_id: int,
+        drug_mf_country_id: int,
+        drug_mf_country_name: str,
+        drug_mf_name: str,
+        price: float,
+    ) -> "Item":
+        return cls(
+            item_id,
+            Drug.from_primitives(
+                drug_id,
+                drug_group_id,
+                drug_group_name,
+                drug_cipher,
+                drug_name,
+                drug_mf_id,
+                drug_mf_country_id,
+                drug_mf_country_name,
+                drug_mf_name,
+            ),
+            price,
+        )
 
 
 @dataclass
-class ItemAmount:
-    item_id: int
-    drug_id: int
-    drug_group: str
-    drug_cipher: str
-    drug_name: str
-    drug_manufacturer: str
-    price: int
-    amount: int
+class Order:
+    order_id: int
+    create_date: datetime.date
+    expect_receive_date: datetime.date
+    receive_date: t.Optional[datetime.date] = None
+    cost: t.Optional[float] = 0

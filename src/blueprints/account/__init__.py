@@ -15,7 +15,7 @@ bp = Blueprint(
 )
 
 
-@bp.route("/")
+@bp.get("/")
 @login_required
 def read():
     return render_template("account.j2")
@@ -28,7 +28,7 @@ def logout():
     return redirect(url_for("read"))
 
 
-@bp.route("/accounts")
+@bp.get("/accounts")
 @admin_rights_required
 def accounts():
     users = db_get_users(db)

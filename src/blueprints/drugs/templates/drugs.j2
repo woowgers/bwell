@@ -50,13 +50,13 @@
         <th></th>
       </tr>
       {% for drug in drugs %}
-        <form method=DELETE action={{ url_for("drugs.delete_drug", drug_id=drug.drug_id) }}>
+        <form method=POST action={{ url_for("drugs.delete_drug", drug_id=drug.drug_id) }}>
           <tr>
             <td> <p> {{ drug.drug_id }} </td>
-            <td> <p> {{ drug.drug_group }} </td>
+            <td> <p> {{ drug.drug_group.name }} </td>
             <td> <input readonly value="{{ drug.cipher }}"> </td>
             <td> <p> {{ drug.name }} </td>
-            <td> <p> {{ drug.manufacturer }} </td>
+            <td> <p> {{ drug.manufacturer.name }} </td>
             <td>
                 <input type=submit value=Delete>
             </td>

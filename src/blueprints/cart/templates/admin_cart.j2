@@ -1,6 +1,12 @@
-{% extends 'base.j2' %}
+{% extends 'base_cart_layout.j2' %}
+
 {% block title %} Admin's cart {% endblock %}
-{% block content %}
-  <h1> Your admin's cart </h1>
-  {% include 'base_cart_layout.j2' %}
+{% block header %} Your admin's cart {% endblock %}
+
+{% block change_amount_form_action %}
+  {{ url_for('cart.admin_cart_change_item_amount') }}
+{% endblock %}
+
+{% block order_cart_form_action %}
+    {{ url_for('cart.order_admin_cart') }}
 {% endblock %}

@@ -90,13 +90,11 @@ nav {
       margin-top: 0.4em; }
 
 h1 {
+  font-size: 3em;
   margin: 0.5em 0 1em 0; }
 
 h2, h3, h4 {
   margin: 0.4em 0; }
-
-h2:not(.first-child) {
-  margin-top: 2em; }
 
 h2 {
   color: DimGray;
@@ -105,7 +103,9 @@ h2 {
   padding: 0.5em;
   border-bottom: 2px solid #e2e6f0;
   border-bottom-right-radius: 0.5em;
-  border-bottom-left-radius: 0.5em; }
+  border-bottom-left-radius: 0.5em;
+  margin-top: 2em;
+  font-size: 2.5em; }
 
 #flashes-container {
   position: fixed;

@@ -3,6 +3,7 @@ from .validators import *
 from abc import ABC, abstractmethod
 import typing as t
 import uuid
+import math
 
 from helpers.flashes import flash_error
 from helpers import dict_to_snake_case, to_user_friendly
@@ -35,10 +36,12 @@ class Field(ABC):
         else:
             obj._invalid_fields[self.name] = field_value
 
-    def __get__(self, obj, objtype=None):  # pyright: ignore
-        if isinstance(obj, Form):
-            return obj._fields[self.name]
-        return self
+    def __get__(self, obj: "Form", _=None) -> t.Union[str, "Field", None]:
+        if obj._fields[self.name]:
+            try:
+                return str(obj._fields[self.name])
+            except ValueError:
+                return self
 
     @abstractmethod
     def is_valid(self, value) -> bool:
@@ -67,7 +70,8 @@ class FormMeta(type):
 
 
 class Form(metaclass=FormMeta):
-    def __init__(self, fields_dict={}):
+    def __init__(self, fields_dict=None):
+        fields_dict = fields_dict or {}
         self._fields: dict[str, t.Any] = {}
         self._invalid_fields: dict[str, t.Any] = {}
         fields_dict = dict_to_snake_case(fields_dict)
@@ -93,7 +97,7 @@ class Form(metaclass=FormMeta):
     def is_valid(self) -> bool:
         field_descs = self.__class__._field_descs
         for field_name, field_value in self._invalid_fields.items():
-            if not field_value:
+            if field_value is None:
                 self._on_none_field(field_name)
             else:
                 self._on_invalid_field(field_name, field_descs[field_name])
@@ -114,15 +118,15 @@ class Form(metaclass=FormMeta):
 
 
 class StringField(Field):
-    def __init__(self, **kwargs):
-        self.minlen = int(kwargs.pop("minlen", 1))
-        self.maxlen = int(kwargs.pop("maxlen", 255))
-        if self.minlen >= self.maxlen:
+    def __init__(self, minlen: int = 0, maxlen: int = t.cast(int, math.inf)):
+        if minlen > maxlen:
             raise ValueError(
-                f"{to_user_friendly(self.name)} maximum length must be greater than minimal length."
+                f"{to_user_friendly(self.name)} minimum length must not be greater than maximum length."
             )
+        self.minlen = minlen
+        self.maxlen = maxlen
 
-    def is_valid(self, value):
+    def is_valid(self, value) -> bool:
         return isinstance(value, str) and self.minlen <= len(value) <= self.maxlen
 
     @property
@@ -131,29 +135,65 @@ class StringField(Field):
 
 
 class IntegerField(Field):
-    def is_valid(self, value):
-        return isinstance(value, str) and value.isnumeric()
+    def __init__(
+        self, minval: int = t.cast(int, -math.inf), maxval: int = t.cast(int, math.inf)
+    ):
+        if minval > maxval:
+            raise ValueError(
+                f'"{to_user_friendly(self.name)}" minimum value must not be greater than maximum value.'
+            )
+        self.minval = minval
+        self.maxval = maxval
+
+    def is_valid(self, value) -> bool:
+        try:
+            return self.minval <= int(value) <= self.maxval
+        except (TypeError, ValueError):
+            return False
+
+    def __get__(self, obj, _=None) -> t.Union[int, "IntegerField", None]:
+        if obj._fields[self.name]:
+            try:
+                return int(obj._fields[self.name])
+            except ValueError:
+                return self
 
     @property
     def validation_requirements(self) -> str:
-        return f"{to_user_friendly(self.name)} value must be integer."
+        return f"{to_user_friendly(self.name)} value must be integer in interval [{self.minval}; {self.maxval}]."
 
 
 class FloatField(Field):
-    def is_valid(self, value):
+    def __init__(
+        self, minval: float = float(-math.inf), maxval: float = float(math.inf)
+    ):
+        if minval > maxval:
+            raise ValueError(
+                f'"{to_user_friendly(self.name)}" must not be greater than maximum value.'
+            )
+        self.minval = minval
+        self.maxval = maxval
+
+    def is_valid(self, value) -> bool:
         try:
-            float(value)
-            return True
-        except ValueError:
+            return self.minval <= float(value) <= self.maxval
+        except (TypeError, ValueError):
             return False
+
+    def __get__(self, obj: Form, _=None) -> t.Union[float, "FloatField", None]:
+        if obj._fields[self.name]:
+            try:
+                return float(obj._fields[self.name])
+            except ValueError:
+                return self
 
     @property
     def validation_requirements(self) -> str:
-        return f"{to_user_friendly(self.name)} value must be decimal."
+        return f"{to_user_friendly(self.name)} value must be decimal in range [{self.minval}; {self.maxval}]."
 
 
 class EmailField(Field):
-    def is_valid(self, value):
+    def is_valid(self, value) -> bool:
         return email_is_valid(value)
 
     @property
@@ -162,7 +202,7 @@ class EmailField(Field):
 
 
 class PasswordField(Field):
-    def is_valid(self, value):
+    def is_valid(self, value) -> bool:
         return password_is_valid(value)
 
     @property
@@ -171,7 +211,7 @@ class PasswordField(Field):
 
 
 class UsernameField(Field):
-    def is_valid(self, value):
+    def is_valid(self, value) -> bool:
         return username_is_valid(value)
 
     @property
@@ -180,7 +220,7 @@ class UsernameField(Field):
 
 
 class UserTypeField(Field):
-    def is_valid(self, value):
+    def is_valid(self, value) -> bool:
         return user_type_is_valid(value)
 
     @property
@@ -189,8 +229,15 @@ class UserTypeField(Field):
 
 
 class DateField(Field):
-    def is_valid(self, value):
+    def is_valid(self, value) -> bool:
         return date_is_valid(value)
+
+    def __get__(self, obj: Form, _=None) -> t.Union[datetime.date, "DateField", None]:
+        if obj._fields[self.name]:
+            try:
+                return date_from_string(obj._fields[self.name])
+            except ValueError:
+                return self
 
     @property
     def validation_requirements(self) -> str:
@@ -198,13 +245,13 @@ class DateField(Field):
 
 
 class CipherField(Field):
+    def is_valid(self, value):
+        return isinstance(value, str) and len(value) >= 6
+
     def __set__(self, obj: Form, value: t.Any):
         if value == "$UUID":
             value = str(uuid.uuid1())
         super().__set__(obj, value)
-
-    def is_valid(self, value):
-        return isinstance(value, str) and len(value) >= 6
 
     @property
     def validation_requirements(self) -> str:
@@ -253,7 +300,6 @@ class VendorRegisterForm(Form):
 
 
 class VendorAgreementTerminationForm(Form):
-    vendor_id = IntegerField()
     termination_date = DateField()
 
 
@@ -266,7 +312,6 @@ class DrugRegisterForm(Form):
 
 class VendorAddItemForm(Form):
     drug_id = IntegerField()
-    vendor_id = IntegerField()
     price = FloatField()
 
 
@@ -276,5 +321,14 @@ class VendorAddStorefrontItemForm(Form):
 
 
 class AddItemToCartForm(Form):
+    amount = IntegerField(minval=1)
+
+
+class AddItemToCartFormWithID(Form):
     item_id = IntegerField()
-    amount = IntegerField()
+    amount = IntegerField(minval=1)
+
+
+class ChangeItemAmountForm(Form):
+    item_id = IntegerField()
+    amount = IntegerField(minval=0)

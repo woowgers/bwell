@@ -1,4 +1,6 @@
-{% block cart_content %}
+{% extends 'base.j2' %}
+
+{% block content %}
   {% if items|length > 0 %}
     <table>
         <tr>
@@ -8,19 +10,31 @@
             <th> <p> Name </th>
             <th> <p> Manufacturer </th>
             <th> <p> Price </th>
+            <th colspan=2> <p> Amount </th>
         </tr>
-        <tr>
-            {% for item in items %}
-                {{ itemitem_id }}
-                {{ itemdrug_id }}
-                {{ itemdrug_group }}
-                {{ itemdrug_cipher }}
-                {{ itemdrug_name }}
-                {{ itemdrug_manufacturer }}
-                {{ itemprice }}
-            {% endfor %}
-        </tr>
+        {% for item, amount in items %}
+          <tr>
+            <td> <p> {{ item.item_id }} </td>
+            <td> <p> {{ item.drug.drug_group.name }} </td>
+            <td> <p> {{ item.drug.cipher }} </td>
+            <td> <p> {{ item.drug.name }} </td>
+            <td> <p> {{ item.drug.manufacturer.name }} </td>
+            <td> <p> {{ item.price }} </td>
+            <form method=POST action="{% block change_amount_form_action %}{% endblock %}">
+              <input name=item-id type=hidden value="{{ item.item_id }}" />
+              <td>
+              <input name=amount type=number value="{{ amount }}" />
+              </td>
+              <td>
+                <input type=submit value="Change amount" />
+              </td>
+            </form>
+          </tr>
+        {% endfor %}
     </table>
+    <form method=POST action="{% block order_cart_form_action %}{% endblock %}">
+        <input type=Submit value="Make order">
+    </form>
   {% else %}
     <h3> There's nothing in your cart currently. </h3>
   {% endif %}

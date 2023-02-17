@@ -38,10 +38,10 @@
       {% for manufacturer in manufacturers %}
         <tr>
           <td> <p> {{ manufacturer.manufacturer_id }} </td>
-          <td> <p> {{ manufacturer.country_name|capitalize }} </td>
+          <td> <p> {{ manufacturer.country.name|capitalize }} </td>
           <td> <p> {{ manufacturer.name }} </td>
           <td>
-            <form method=DELETE action={{ url_for('manufacturers.delete', manufacturer_id=manufacturer.manufacturer_id) }}>
+            <form method=POST action={{ url_for('manufacturers.delete', manufacturer_id=manufacturer.manufacturer_id) }}>
               <input value=Delete type=submit >
             </form>
           </td>

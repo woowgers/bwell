@@ -6,21 +6,21 @@
   <h2> Storefront </h2>
 
   <h3> Add item to vendor's storefront </h3>
-  <form method=POST action="{{ url_for('vendors.storefront_items', vendor_id=vendor.vendor_id) }}">
+  <form method=POST action="{{ url_for('vendors.add_storefront_item', vendor_id=vendor.vendor_id) }}">
     <table>
       <th> <p> Item ID </th>
       <th> <p> Amount </th>
       <th> </th>
       <tr>
-        <td> <input name=item-id type=number autocomplete=off list=items-list /> </td>
-        <td> <input name=amount type= autocomplete=off list= /> </td>
+        <td> <input name=item-id type=text autocomplete=off list=items-list /> </td>
+        <td> <input name=amount type=number autocomplete=off /> </td>
         <td> <input type=submit value=Add /> </td>
       </tr>
     </table>
     <datalist id=items-list>
       {% for item in items %}
         <option value={{ item.item_id }}>
-          {{ item.name }} ({{ item.drug_group }})
+          {{ item.drug.name }} | {{ item.price }} | {{ item.drug.cipher }}
         </option>
       {% endfor %}
     </datalist>
@@ -37,23 +37,30 @@
       <th> <p> Price </th>
       <th> <p> Amount </th>
       <th></th>
-      {% for item in storefront_items %}
+      <th colspan=2> Cart </th>
+      {% for item, amount in storefront_items %}
         <tr>
           <td> <p> {{ item.item_id }} </td>
-          <td> <p> {{ item.drug_group }} </td>
-          <td> <p> {{ item.drug_cipher }} </td>
-          <td> <p> {{ item.drug_name }} </td>
-          <td> <p> {{ item.drug_manufacturer }} </td>
+          <td> <p> {{ item.drug.drug_group.name }} </td>
+          <td> <input readonly value="{{ item.drug.cipher }}" /> </td>
+          <td> <p> {{ item.drug.name }} </td>
+          <td> <p> {{ item.drug.manufacturer.name }} </td>
           <td> <p> {{ item.price }} </td>
-          <td> <p> {{ item.amount }} </td>
-          <td>
-            <form method=DELETE action="{{ url_for('vendors.storefront_items', vendor_id=vendor.vendor_id) }}">
-              <input type=submit value="Delete">
-            </form>
-          </td>
+          <td> <p> {{ amount }} </td>
+          <td> <input form="{{ 'delete-vendor-item-form-' + item.item_id|string }}" type=submit value="Delete"> </td>
+          <td> <input form="{{ 'add-to-admin-cart-form-' + item.item_id|string }}" name=amount type=number autocomplete=off /> </td>
+          <td> <input form="{{ 'add-to-admin-cart-form-' + item.item_id|string }}" value="Add to cart" type=submit /> </td>
         </tr>
       {% endfor %}
     </table>
+    {% for item in items %}
+      <form id="{{ 'add-to-admin-cart-form-' + item.item_id|string }}"
+            action="{{ url_for('cart.add_to_admin_cart', item_id=item.item_id) }}"
+            method=POST > </form>
+      <form id="{{ 'delete-vendor-item-form-' + item.item_id|string }}"
+            action="{{ url_for('vendors.delete_storefront_item', vendor_id=vendor.vendor_id, item_id=item.item_id) }}"
+            method=POST > </form>
+    {% endfor %}
   {% else %}
     <h3> <q>{{ vendor.company_name }}</q> does not have any items on storefront currently. </h3>
   {% endif %}
@@ -63,7 +70,7 @@
 
   <h3> Add item </h3>
 
-  <form method=POST action={{ url_for('vendors.items', vendor_id=vendor.vendor_id) }}>
+  <form method=POST action={{ url_for('vendors.add_item', vendor_id=vendor.vendor_id) }}>
     <table>
       <th> Drug ID </th>
       <th> Price </th>
@@ -71,13 +78,14 @@
       <tr>
         <td> <input name=drug-id type=text autocomplete=off list=drugs-list> </td>
         <td> <input name=price type=text autocomplete=off> </td>
-        <input name=vendor-id type=hidden value={{ vendor.vendor_id }}>
         <td> <input type=submit value=Add> </td>
       </tr>
     </table>
     <datalist id=drugs-list>
       {% for drug in drugs %}
-        <option value={{ drug.drug_id }}> {{ drug.name }} ({{ drug.drug_group }}) </option>
+        <option value={{ drug.drug_id }}>
+          {{ drug.name }} | {{ drug.cipher }}
+        </option>
       {% endfor %}
       <option>
     </datalist>
@@ -94,11 +102,11 @@
       <th></th>
       {% for item in items %}
         <tr>
-          <td> <p> {{ item.drug_id }} </td>
-          <td> <p> {{ item.drug_group }} </td>
-          <td> <input readonly value="{{ item.drug_cipher }}"> </td>
-          <td> <p> {{ item.drug_name }} </td>
-          <td> <p> {{ item.drug_manufacturer }} </td>
+          <td> <p> {{ item.drug.drug_id }} </td>
+          <td> <p> {{ item.drug.drug_group.name }} </td>
+          <td> <input readonly value="{{ item.drug.cipher }}"> </td>
+          <td> <p> {{ item.drug.name }} </td>
+          <td> <p> {{ item.drug.manufacturer.name }} </td>
           <td> <p> {{ item.price }} </td>
           <td>
             <form method=POST action="{{ url_for('vendors.delete_item', vendor_id=vendor.vendor_id, item_id=item.item_id) }}">
@@ -112,11 +120,4 @@
     <h3> There are no drugs currently. </h3>
   {% endif %}
 
-  {#
-    <form method=POST action="{{ url_for('cart.admin') }}">
-      <input name=item-id type=hidden value={{ item.item_id }}>
-      <td> <input name=amount type=number size=2 /> </td>
-      <td> <input type=submit value="Add to cart" /> </td>
-    </form>
-  #}
 {% endblock %}

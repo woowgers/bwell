@@ -1,5 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request
-import click
+from flask import Blueprint, render_template, redirect, request
 
 from helpers.flashes import flash_error
 from helpers.authority import admin_rights_required
@@ -17,7 +16,8 @@ bp = Blueprint(
 )
 
 
-@bp.route("/")
+@bp.get("/")
+@admin_rights_required
 def read():
     return render_template(
         "manufacturers.j2",
@@ -31,24 +31,22 @@ def read():
 def create():
     form = ManufacturerAddForm(request.form.to_dict())
     if not form.is_valid:
-        return redirect(url_for("manufacturers.read"))
+        return redirect(request.referrer)
 
     try:
-        db_add_manufacturer(db, form.company_name, form.country_name)
+        db_add_manufacturer(db, form.country_name, form.company_name)
     except ModelError as error:
         flash_error(error)
 
-    return redirect(url_for("manufacturers.read"))
+    return redirect(request.referrer)
 
 
-@bp.delete("/<int:manufacturer_id>")
+@bp.post("/<int:manufacturer_id>/delete")
+@admin_rights_required
 def delete(manufacturer_id: int):
-    click.echo(request.headers)
-
     try:
         db_delete_manufacturer(db, manufacturer_id)
     except ModelError as error:
         flash_error(error)
 
-    return ''
-    # return redirect(url_for("manufacturers.read"))
+    return redirect(request.referrer)

@@ -86,7 +86,7 @@ def create_app() -> Flask:
 
     app.teardown_appcontext(close_db_proxy)
 
-    @app.route("/")
+    @app.get("/")
     def read():  # pyright: ignore
         return render_template("index.j2")
 

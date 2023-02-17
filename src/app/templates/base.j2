@@ -68,8 +68,8 @@
   </nav>
 
   <div id=content-container>
-    {% block content %}
-    {% endblock %}
+    <h1> {% block header %} {% endblock %} </h1>
+    {% block content %} {% endblock %}
   </div>
 
   <datalist id=cipher-datalist>
@@ -80,7 +80,6 @@
   <script type=module src={{ url_for('static', filename='script/flash.js') }}></script>
   <script type=module src={{ url_for('static', filename='script/navbar-logout-button.js') }}></script>
   <script type=module src={{ url_for("static", filename="script/close-message-button.js") }}></script>
-  <script type=module src={{ url_for('static', filename='script/set-form-method-handlers.js') }}></script>
 
 </body>
 </html>

@@ -60,13 +60,14 @@ def login():
         if not form.is_valid:
             return redirect(request.url)
 
-        user = db_get_user_by_email(db, form.email)
-        if not user:
-            flash_error("User with given email does not exist")
+        try:
+            user = db_get_user_by_email(db, form.email)
+        except ModelError as error:
+            flash_error(error)
             return redirect(request.url)
 
         if not check_password_hash(user.pw_hash, form.password):
-            flash_error("Invalid password")
+            flash_error("Invalid password.")
             return redirect(request.url)
 
         session["user"] = user

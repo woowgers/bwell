@@ -21,11 +21,11 @@ bp = Blueprint(
 def read():
     manufacturers = db_get_manufacturers(db)
     if len(manufacturers) == 0:
-        flash(
+        flash_info(
             """There are no manufacturers currently.
-              You must create some manufacturers first to add drugs.""",
-            category="info",
+              You must create some manufacturers first to add drugs."""
         )
+
     return render_template(
         "drugs.j2",
         drugs=db_get_drugs(db),
@@ -40,14 +40,14 @@ def read():
 def post():
     form = DrugRegisterForm(request.form.to_dict())
     if not form.is_valid:
-        return redirect(url_for("drugs.read"))
+        return redirect(request.referrer)
 
-    manufacturer = db_get_manufacturer_by_name(db, form.manufacturer_name)  # type: ignore
+    manufacturer = db_get_manufacturer_by_name(db, form.manufacturer_name)
     if not manufacturer:
         flash_error(
             f'Manufacturer with company name "{form.manufacturer_name}" does not exist.'
         )
-        return redirect(url_for("drugs.read"))
+        return redirect(request.referrer)
 
     try:
         db_add_drug(
@@ -59,19 +59,16 @@ def post():
         )
     except ModelError as error:
         flash_error(error)
-        return redirect(request.referrer)
 
-    return redirect(url_for("drugs.read"))
+    return redirect(request.referrer)
 
 
 @bp.post("/delete-drug/<int:drug_id>")
 @admin_rights_required
 def delete_drug(drug_id):
-    SQL_PROCEDURE = "drug_delete"
-
     try:
-        db.callproc(SQL_PROCEDURE, (drug_id,))
-    except DBIntegrityError as error:
-        flash_error(f"Unexpected database error: {error}.")
+        db_delete_drug(db, drug_id)
+    except ModelError as error:
+        flash_error(error)
 
     return redirect(url_for("drugs.read"))
