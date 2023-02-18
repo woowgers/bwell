@@ -89,15 +89,15 @@ def init_db(schema_directory):
         click.echo(click.style(f"No sql files found in {schema_directory}", fg="red"))
         exit(1)
 
+    if not database_exists(engine.url):
+        click.echo(click.style(f"Database {schema} does not exist. Creating databse...", fg="yellow"))
+        create_database(engine.url)
+
     click.echo(
         click.style(f"Executing SQL sources in following sequence:", fg="yellow")
     )
     for path in paths:
         click.echo(f"\t{path}")
-
-    if not database_exists(engine.url):
-        click.echo(click.style(f"Database {schema} does not exist. Creating databse...", fg="yellow"))
-        create_database(engine.url)
 
     with engine.connect() as con:
         for path in paths:
