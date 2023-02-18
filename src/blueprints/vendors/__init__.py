@@ -17,30 +17,36 @@ bp = Blueprint(
 )
 
 
-@bp.route("/", methods=("GET", "POST"))
+@bp.get("/")
 @admin_rights_required
 def read():
-    if request.method == "GET":
-        return render_template(
-            "vendors.j2", cities=db_get_cities(db), vendors=db_get_vendors(db)
-        )
+    return render_template(
+        "vendors.j2", cities=db_get_cities(db), vendors=db_get_vendors(db)
+    )
 
-    else:
-        form = VendorRegisterForm(request.form.to_dict())
-        if not form.is_valid:
-            return redirect(url_for("vendors.read"))
 
-        try:
-            vendor = db_add_vendor(db, *form.fields.values())
-        except ModelError as error:
-            flash_error(error)
-        else:
-            flash_success(f'You have successfully registered "{vendor.company_name}".')
-
+@bp.post("/")
+@admin_rights_required
+def add_vendor():
+    form = VendorRegisterForm(request.form.to_dict())
+    if not form.is_valid:
         return redirect(url_for("vendors.read"))
 
+    try:
+        db_add_vendor(
+            db,
+            form.cipher,
+            form.company_name,
+            form.city_name,
+            form.agreement_conclusion_date,
+        )
+    except ModelError as error:
+        flash_error(error)
 
-@bp.post("/delete_vendor/<int:vendor_id>")
+    return redirect(request.referrer)
+
+
+@bp.post("/<int:vendor_id>/delete")
 @admin_rights_required
 def delete_vendor(vendor_id: int):
     try:
@@ -51,61 +57,58 @@ def delete_vendor(vendor_id: int):
     return redirect(request.referrer)
 
 
-@bp.post("/terminate_agreement")
+@bp.post("/<int:vendor_id>/terminate-agreement")
 @admin_rights_required
-def terminate_agreement():
+def terminate_agreement(vendor_id: int):
     form = VendorAgreementTerminationForm(request.form.to_dict())
     if not form.is_valid:
         return redirect(url_for("vendors.read"))
 
     try:
-        vendor = db_get_vendor(db, form.vendor_id)
-        db_vendor_terminte_agreement(db, form.vendor_id, form.termination_date)
+        db_vendor_terminate_agreement(db, vendor_id, form.termination_date)
     except ModelError as error:
         flash_error(error)
-    else:
-        flash_success(
-            f'You have successfully terminated agreeement with "{vendor.company_name}".'
-        )
 
-    return redirect(url_for("vendors.read"))
+    return redirect(request.referrer)
 
 
-@bp.route("/items/<int:vendor_id>", methods=("GET", "POST"))
+@bp.get("/<int:vendor_id>/items")
 @admin_rights_required
 def items(vendor_id: int):
-    if request.method == "GET":
-        try:
-            vendor = db_get_vendor(db, vendor_id)
-        except ModelError as error:
-            flash_error(error)
-            return redirect(request.referrer)
-
-        return render_template(
-            "vendors_items.j2",
-            drugs=db_get_drugs(db),
-            vendor=vendor,
-            items=db_get_vendor_items(db, vendor_id),
-            storefront_items=db_get_vendor_storefront_items(db, vendor_id),
-        )
-
-    else:
-        form = VendorAddItemForm(request.form.to_dict())
-        if not form.is_valid:
-            return redirect(url_for("vendors.items", vendor_id=vendor_id))
-
-        try:
-            db_add_vendor_item(db, vendor_id, form.drug_id, form.price)
-        except ModelError as error:
-            flash_error(error)
-            return redirect(request.referrer)
-
+    try:
+        vendor = db_get_vendor(db, vendor_id)
+    except ModelError as error:
+        flash_error(error)
         return redirect(request.referrer)
 
+    return render_template(
+        "vendors_items.j2",
+        drugs=db_get_drugs(db),
+        vendor=vendor,
+        items=db_get_vendor_items(db, vendor_id),
+        storefront_items=db_get_vendor_storefront_items_amounts(db, vendor_id),
+    )
 
-@bp.post("/storefront-items/<int:vendor_id>")
+
+@bp.post("/<int:vendor_id>/items/add")
 @admin_rights_required
-def storefront_items(vendor_id: int):
+def add_item(vendor_id: int):
+    form = VendorAddItemForm(request.form.to_dict())
+    if not form.is_valid:
+        return redirect(url_for("vendors.items", vendor_id=vendor_id))
+
+    try:
+        db_add_vendor_item(db, vendor_id, form.drug_id, form.price)
+    except ModelError as error:
+        flash_error(error)
+        return redirect(request.referrer)
+
+    return redirect(request.referrer)
+
+
+@bp.post("/<int:vendor_id>/storefront/add")
+@admin_rights_required
+def add_storefront_item(vendor_id: int):
     form = VendorAddStorefrontItemForm(request.form.to_dict())
     if not form.is_valid:
         return redirect(request.referrer)
@@ -118,12 +121,23 @@ def storefront_items(vendor_id: int):
     return redirect(request.referrer)
 
 
-@bp.post("/delete-item/<int:vendor_id>/<int:item_id>")
+@bp.post("/items/delete/<int:item_id>")
 @admin_rights_required
-def delete_item(vendor_id: int, item_id: int):
+def delete_item(item_id: int):
     try:
         db_delete_vendor_item(db, item_id)
     except ModelError as error:
         flash_error(error)
 
-    return redirect(url_for("vendors.items", vendor_id=vendor_id))
+    return redirect(request.referrer)
+
+
+@bp.post("/<int:vendor_id>/storefront/delete/<int:item_id>")
+@admin_rights_required
+def delete_storefront_item(vendor_id: int, item_id: int):
+    try:
+        db_delete_vendor_storefront_item(db, vendor_id, item_id)
+    except ModelError as error:
+        flash_error(error)
+
+    return redirect(request.referrer)

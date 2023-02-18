@@ -68,8 +68,8 @@
   </nav>
 
   <div id=content-container>
-    {% block content %}
-    {% endblock %}
+    <h1> {% block header %} {% endblock %} </h1>
+    {% block content %} {% endblock %}
   </div>
 
   <datalist id=cipher-datalist>

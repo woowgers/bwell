@@ -1,6 +1,8 @@
-{% extends 'base.j2' %}
+{% extends 'base_cart_layout.j2' %}
+
 {% block title %} Customer's cart {% endblock %}
-{% block content %}
-  <h1> Your customer's cart </h1>
-  {% include 'base_cart_layout.j2' %}
+{% block header %} Your customer's cart {% endblock %}
+
+{% block change_amount_form %}
+  {{ url_for('cart.customer_cart_change_amount') }}
 {% endblock %}

@@ -10,23 +10,34 @@ import typing as t
 ViewHandler = t.Callable
 
 
-def login_required(view: ViewHandler) -> ViewHandler:
-    @wraps(view)
+def login_required(handler: ViewHandler) -> ViewHandler:
+    @wraps(handler)
     def wrapper(*args, **kwargs):
         if not user:
             flash_error(f"You have to log in to perform this operation.")
             return redirect(url_for("auth.login"))
-        return view(*args, **kwargs)
+        return handler(*args, **kwargs)
 
     return wrapper
 
 
-def admin_rights_required(view: ViewHandler) -> ViewHandler:
-    @wraps(view)
+def admin_rights_required(handler: ViewHandler) -> ViewHandler:
+    @wraps(handler)
     def wrapper(*args, **kwargs):
         if not user or not user.is_admin:
             flash_error(f"Only administrator has rights for this operation")
             return redirect(url_for("auth.login"))
-        return view(*args, **kwargs)
+        return handler(*args, **kwargs)
+
+    return wrapper
+
+
+def cashier_rights_required(handler: ViewHandler) -> ViewHandler:
+    @wraps(handler)
+    def wrapper(*args, **kwargs):
+        if not user or not (user.is_admin or user.is_cashier):
+            flash_error(f"This operation requires at least cashier's rights.")
+            return redirect(url_for("auth.login"))
+        return handler(*args, **kwargs)
 
     return wrapper

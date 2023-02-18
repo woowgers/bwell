@@ -1,8 +1,12 @@
 import typing as t
-from db.models import User, UserType
+from db.models import UserType
 import re
 
-from datetime import datetime
+import datetime
+
+
+def date_from_string(date_str: str) -> datetime.date:
+    return datetime.datetime.strptime(date_str, "%Y-%m-%d").date()
 
 
 def any_is_valid(_: t.Any) -> bool:
@@ -21,16 +25,6 @@ def user_type_is_valid(user_type_value: t.Any) -> bool:
         UserType(user_type_value)
         return True
     except ValueError:
-        return False
-
-
-def user_is_valid(user_value: t.Any) -> bool:
-    if isinstance(user_value, User):
-        return True
-    try:
-        User(**user_value)
-        return True
-    except (TypeError, ValueError):
         return False
 
 
@@ -81,10 +75,14 @@ DATE_REQUIREMENTS = f"Date must be in form: YYYY-MM-DD."
 
 
 def date_is_valid(date_str: t.Any) -> bool:
-    if not isinstance(date_str, str):
-        return False
-    try:
-        datetime.strptime(date_str, "%Y-%m-%d")
+    if isinstance(date_str, datetime.date):
         return True
-    except ValueError:
-        return False
+
+    if isinstance(date_str, str):
+        try:
+            date_from_string(date_str)
+            return True
+        except ValueError:
+            return False
+
+    return False
