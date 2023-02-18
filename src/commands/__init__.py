@@ -2,12 +2,12 @@ from flask import current_app
 import click
 
 from glob import glob
-
 import shutil
 import shlex
 import os
 import random
 import string
+
 from sqlalchemy.engine import create_engine
 from sqlalchemy_utils import create_database, database_exists
 from sqlalchemy import text
@@ -73,7 +73,7 @@ def init_db(schema_directory):
     user = db_config["user"]
     password = db_config["password"]
     engine = create_engine(
-        f"mysql+mysqldb://{user}:{password}@{host}:{port}/{schema}", pool_timeout=280
+        f"postgresql://{user}:{password}@{host}:{port}/{schema}", pool_timeout=280
     )
 
     if not os.path.exists(schema_directory):
