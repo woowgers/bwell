@@ -14,3 +14,7 @@
 Может быть:
 
 - Убрать ID там, где есть cipher
+
+
+
+What the fuck is wrong with the postgresql triggers??????

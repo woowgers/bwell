@@ -47,11 +47,8 @@ def init_instance():
             type=str,
         )
     )
-    environ["BWELL_DB_HOST"] = shlex.quote(
-        click.prompt("Database host", default="localhost", type=str)
-    )
-    environ["BWELL_DB_PORT"] = click.prompt("Database port", default=3306, type=int)
     environ["BWELL_DB_SCHEMA"] = shlex.quote(click.prompt("Datbase schema", type=str))
+    environ["BWELL_DB_HOST"] = shlex.quote(click.prompt("Database host", type=str))
     environ["BWELL_DB_USER"] = shlex.quote(click.prompt("Database user", type=str))
     environ["BWELL_DB_PASSWORD"] = click.prompt(
         f"{environ['BWELL_DB_USER']} password", hide_input=True
@@ -67,13 +64,12 @@ def init_instance():
 @click.argument("schema-directory", default="schema")
 def init_db(schema_directory):
     db_config = current_app.config["DATABASE"]
-    host = db_config["host"]
-    port = db_config["port"]
     schema = db_config["database"]
+    host = db_config["host"]
     user = db_config["user"]
     password = db_config["password"]
     engine = create_engine(
-        f"postgresql://{user}:{password}@{host}:{port}/{schema}", pool_timeout=280
+        f"postgresql+psycopg2://{user}:{password}@{host}/{schema}", pool_timeout=280
     )
 
     if not os.path.exists(schema_directory):

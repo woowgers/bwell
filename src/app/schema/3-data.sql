@@ -1,4 +1,4 @@
-insert into user (user_type, email, name, pw_hash) values
+insert into "user" (user_type, email, name, pw_hash) values
 (
     'admin',
     'sashashibaev@gmail.com',

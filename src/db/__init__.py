@@ -1,5 +1,6 @@
 from flask import flash
 import psycopg2
+import psycopg2._psycopg
 
 from .models import *
 
@@ -13,10 +14,8 @@ DBProgrammingError = psycopg2.ProgrammingError
 DBInterfaceError = psycopg2.InterfaceError
 DBInternalError = psycopg2.InternalError
 
-psycopg2.connection
-
-DBConnection = psycopg2.connection
-DBCursor = psycopg2.cursor
+DBConnection = psycopg2._psycopg.connection
+DBCursor = psycopg2._psycopg.cursor
 
 
 ModelError = DBIntegrityError
