@@ -161,3 +161,10 @@ def db_order_admin_cart(
 
     db_executemany(db, SQL_QUERY, param_tuples)
     db_delete_admin_cart_items(db, user_id)
+
+
+def db_get_admins_orders(db: DBCursor) -> tuple[Order]:
+    SQL_QUERY = """
+        SELECT order_id
+    """
+    ...

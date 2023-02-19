@@ -13,5 +13,6 @@ packaging==23.0
 protobuf==3.20.3
 python-dotenv==0.21.1
 SQLAlchemy==2.0.3
+SQLAlchemy-Utils==0.40.0
 typing_extensions==4.4.0
 Werkzeug==2.2.2

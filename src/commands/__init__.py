@@ -31,12 +31,16 @@ def init_instance():
             os.makedirs(current_app.instance_path)
         except OSError as error:
             click.echo(f"Failed to create instance folder: {error}.")
-
-    if not os.path.exists(dest_config_py_path):
+    else:
         try:
-            shutil.copy(src_config_py_path, dest_config_py_path)
-        except Exception as error:
-            click.echo(f"Failed to copy `config.py` to instance folder: {error}")
+            os.remove(current_app.instance_path)
+        except OSError as error:
+            click.echo(f"Failed to re-create instance folder: {error}.")
+
+    try:
+        shutil.copy(src_config_py_path, dest_config_py_path)
+    except Exception as error:
+        click.echo(f"Failed to copy `config.py` to instance folder: {error}")
 
     environ["BWELL_SECRET_KEY"] = shlex.quote(
         click.prompt(
