@@ -66,14 +66,13 @@ def init_instance():
 @click.command("init-db", help="Initialize database from SQL source directory")
 @click.argument("schema-directory", default="schema")
 def init_db(schema_directory):
-    db_config = current_app.config["DATABASE"]
-    host = db_config["host"]
-    port = db_config["port"]
-    schema = db_config["database"]
-    user = db_config["user"]
-    password = db_config["password"]
+    host = current_app.config['DB_HOST']
+    port = current_app.config['DB_PORT']
+    schema = current_app.config['DB_SCHEMA']
+    user = current_app.config['DB_USER']
+    password = current_app.config['DB_PASSWORD']
     engine = create_engine(
-        f"mysql+mysqldb://{user}:{password}@{host}:{port}/{schema}", pool_timeout=280
+        f"postgresql+psycopg2://{user}:{password}@{host}:{port}/{schema}", pool_timeout=280
     )
 
     if not os.path.exists(schema_directory):
@@ -101,8 +100,8 @@ def init_db(schema_directory):
 
     with engine.connect() as con:
         for path in paths:
-            with current_app.open_resource(path) as f:
-                code = f.read().decode("utf8")
+            with current_app.open_resource(path, mode='r') as f:
+                code = f.read()
             click.echo(click.style(f"Executing {path}...", fg="yellow"))
             try:
                 con.execute(text(code))
@@ -110,5 +109,5 @@ def init_db(schema_directory):
                 click.echo(
                     click.style(f"Failed to execute {path}:", fg="red") + f"\n{error}"
                 )
-                exit(1)
+                raise
         con.commit()

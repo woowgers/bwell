@@ -1,3 +1,6 @@
+import importlib
+from pathlib import Path
+
 from flask import Flask, render_template
 import click
 
@@ -11,7 +14,10 @@ from db.models import UserType
 from proxies import close_db_proxy, user
 
 
-def app_register_blueprints(app: Flask, blueprints_dir: str) -> None:
+ROOT_DIR = Path(__file__).parent.parent
+
+
+def app_register_blueprints(app: Flask, blueprints_dir: str | Path) -> None:
     try:
         blueprints_module_name = os.path.basename(blueprints_dir)
         for _, module_name, is_package in pkgutil.iter_modules((blueprints_dir,)):
@@ -43,46 +49,18 @@ def app_register_blueprints(app: Flask, blueprints_dir: str) -> None:
         return
 
 
-def app_configure_instance(app: Flask) -> None:
-    if os.path.exists(app.instance_path):
-        app.config.from_pyfile("config.py")
-    else:
-        click.echo(
-            click.style(
-                "No instance folder found. You should run `init-instance` command.",
-                fg="red",
-                bold=True,
-            )
-        )
-        return
-
-    if not app.config.get("SECRET_KEY"):
-        click.echo(
-            click.style(
-                'No "SECRET_KEY" found in app configuration. You should re-run `init-instance` command.',
-                fg="red",
-                bold=True,
-            )
-        )
-
-
 def create_app() -> Flask:
     app = Flask(
         __name__,
-        instance_path=os.path.abspath(
-            os.path.join(os.path.dirname(__file__), "../../instance")
-        ),
-        instance_relative_config=True,
     )
+    app.config.from_pyfile(ROOT_DIR / 'app/config.py')
     app.jinja_env.globals.update(
         user=user, UserType=UserType, apostrophe_appended=apostrophe_appended
     )
     app.cli.add_command(init_instance)
     app.cli.add_command(init_db)
 
-    app_configure_instance(app)
-
-    app_register_blueprints(app, os.path.join(app.root_path, "../blueprints"))
+    app_register_blueprints(app, ROOT_DIR / "blueprints")
 
     app.teardown_appcontext(close_db_proxy)
 
