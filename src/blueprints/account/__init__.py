@@ -39,7 +39,7 @@ def accounts():
 @admin_rights_required
 def delete_account(user_id):
     if user_id == user.user_id:
-        flash_info("You can only delete your account via personal account page.")
+        flash_error("You can only delete your account via personal account page.")
     else:
         try:
             db_delete_user(db, user_id)

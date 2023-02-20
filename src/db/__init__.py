@@ -1,6 +1,7 @@
 from flask import flash
 import mysql.connector
 import mysql.connector.cursor
+import mysql.connector.types
 
 from .models import *
 
@@ -67,10 +68,10 @@ def db_execute(
 
 
 def db_executemany(
-    db: DBCursor, statement: str, params_tuples: t.Sequence[tuple] = ()
+    db: DBCursor, statement: str, params_tuples: t.Sequence[tuple] = (), **kwargs
 ) -> None:
     try:
-        db.executemany(statement, params_tuples)
+        db.executemany(statement, params_tuples, **kwargs)
     except (
         DBOperationalError,
         DBProgrammingError,
@@ -87,7 +88,7 @@ def db_callproc(
         out_args = db.callproc(procedure, params, **kwargs)
         if isinstance(out_args, dict):
             return tuple(out_args.values())
-        elif isinstance(out_args, tuple):
+        if isinstance(out_args, tuple):
             return out_args
     except (
         DBOperationalError,

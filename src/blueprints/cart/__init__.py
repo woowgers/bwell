@@ -4,7 +4,7 @@ from helpers.authority import *
 from helpers.flashes import *
 from proxies import *
 
-from forms import AddItemToCartForm, AddItemToCartFormWithID, ChangeItemAmountForm
+from forms import AddItemToCartForm, AddItemToCustomerCartForm, ChangeItemAmountForm, ChangeCustomerCartItemAmountForm
 
 
 bp = Blueprint(
@@ -43,7 +43,7 @@ def order_admin_cart():
             db,
             user.user_id,
             datetime.date.today(),
-            datetime.date.today() + days_to_wait
+            datetime.date.today() + days_to_wait,
         )
     except ModelError as error:
         flash_error(error)
@@ -96,19 +96,48 @@ def admin_cart_change_item_amount():
 @login_required
 def customer():
     return render_template(
-        "customer_cart.j2", items=db_get_customer_cart_items(db, user.user_id)
+        "customer_cart.j2",
+        items=db_get_customer_cart_items(db, user.user_id)
     )
 
 
 @bp.post("/customer")
 @login_required
 def add_to_customer_cart():
-    form = AddItemToCartFormWithID(request.form.to_dict())
+    form = AddItemToCustomerCartForm(request.form.to_dict())
     if not form.is_valid:
         return redirect(request.referrer)
 
     try:
-        db_add_item_to_customer_cart(db, user.user_id, form.item_id, form.amount)
+        db_push_customer_cart_item_amount(db, user.user_id, form.drug_id, form.price, form.amount)
+    except ModelError as error:
+        flash_error(error)
+
+    return redirect(request.referrer)
+
+
+@bp.post("/customer/change-item-amount")
+def customer_cart_change_item_amount():
+    form = ChangeCustomerCartItemAmountForm(request.form.to_dict())
+    if not form.is_valid:
+        return redirect(request.referrer)
+
+    try:
+        db_update_customer_cart_item_amount(db, user.user_id, form.drug_id, form.price, form.amount)
+    except ModelError as error:
+        flash_error(error)
+
+    return redirect(request.referrer)
+
+
+@bp.post("/customer/<int:user_id>/order")
+@login_required
+def order_customer_cart(user_id: int):
+    if user_id != user.user_id:
+        abort(503)
+
+    try:
+        db_order_customer_cart(db, user.user_id, datetime.date.today(), datetime.date.today())
     except ModelError as error:
         flash_error(error)
 

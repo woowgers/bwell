@@ -2,7 +2,7 @@ from flask import Flask, render_template
 import click
 
 import os
-import pkgutil
+from pathlib import Path
 
 from db import *
 from helpers import *
@@ -11,36 +11,24 @@ from db.models import UserType
 from proxies import close_db_proxy, user
 
 
-def app_register_blueprints(app: Flask, blueprints_dir: str) -> None:
-    try:
-        blueprints_module_name = os.path.basename(blueprints_dir)
-        for _, module_name, is_package in pkgutil.iter_modules((blueprints_dir,)):
-            if not is_package:
-                continue
-            full_module_name = f"{blueprints_module_name}.{module_name}"
-            bp_module = __import__(full_module_name, fromlist=module_name)
-            bp = getattr(bp_module, "bp")
-            if bp:
-                click.echo(
-                    click.style(
-                        f'Registering blueprint "{bp_module.__name__}"...', fg="yellow"
-                    )
-                )
-                app.register_blueprint(bp)
-            else:
-                click.echo(
-                    click.style(
-                        f'Not found object "bp" in module {full_module_name}', fg="red"
-                    )
-                )
+def app_register_blueprints(app: Flask) -> None:
+    from blueprints.account import bp as account_bp
+    from blueprints.auth import bp as auth_bp
+    from blueprints.cart import bp as cart_bp
+    from blueprints.drugs import bp as drugs_bp
+    from blueprints.manufacturers import bp as manufacturers_bp
+    from blueprints.orders import bp as orders_bp
+    from blueprints.pharmacy import bp as pharmacy_bp
+    from blueprints.vendors import bp as vendors_bp
 
-    except Exception as error:
-        click.echo(
-            click.style(
-                "Failed to register blueprints:" + f"\n{error}", fg="red", bold=True
-            )
-        )
-        return
+    app.register_blueprint(account_bp)
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(cart_bp)
+    app.register_blueprint(drugs_bp)
+    app.register_blueprint(manufacturers_bp)
+    app.register_blueprint(orders_bp)
+    app.register_blueprint(pharmacy_bp)
+    app.register_blueprint(vendors_bp)
 
 
 def app_configure_instance(app: Flask) -> None:
@@ -69,9 +57,7 @@ def app_configure_instance(app: Flask) -> None:
 def create_app() -> Flask:
     app = Flask(
         __name__,
-        instance_path=os.path.abspath(
-            os.path.join(os.path.dirname(__file__), "../../instance")
-        ),
+        instance_path=str(Path(__file__).parents[2] / "instance"),
         instance_relative_config=True,
     )
     app.jinja_env.globals.update(
@@ -81,8 +67,7 @@ def create_app() -> Flask:
     app.cli.add_command(init_db)
 
     app_configure_instance(app)
-
-    app_register_blueprints(app, os.path.join(app.root_path, "../blueprints"))
+    app_register_blueprints(app)
 
     app.teardown_appcontext(close_db_proxy)
 

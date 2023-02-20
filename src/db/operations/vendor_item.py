@@ -88,7 +88,6 @@ def db_get_vendor_storefront_item_amount(db: DBCursor, item_id) -> tuple[Item, i
         WHERE vendor_has_item.item_id = %s
     """
     item_tuples = db_execute(db, SQL_QUERY, (item_id,))
-    print(f"item_tuples: {item_tuples}")
     if not item_tuples:
         raise ModelError("Vendor does not have such items on storefront.")
     return Item.from_primitives(*item_tuples[0][:-1]), int(item_tuples[0][-1])
@@ -116,7 +115,6 @@ def db_delete_vendor_storefront_item(db: DBCursor, vendor_id, item_id) -> None:
         DELETE FROM vendor_has_item
         WHERE vendor_id = %s AND item_id = %s
     """
-    db_delete_admin_carts_item(db, item_id)
     db_execute(db, SQL_QUERY, (vendor_id, item_id))
 
 

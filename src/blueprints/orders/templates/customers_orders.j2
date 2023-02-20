@@ -1,0 +1,58 @@
+{% extends 'base.j2' %}
+{% block title %} Customers orders {% endblock %}
+{% block header %} Customers orders {% endblock %}
+{% block content %}
+
+  <table>
+    <th> <p> Minimum create date </th>
+    <th> <p> Maximum create date </th>
+    <th> <p> Minimum receive date </th>
+    <th> <p> Maximum receive date </th>
+    <th> <p> Is received </th>
+    <th> <p> Minimum cost </th>
+    <th> <p> Maximum cost</th>
+    <th></th>
+    <tr>
+      <td> <input name=create-date-min type=date autocomplete=off form=filter-customers-orders-form /> </td>
+      <td> <input name=create-date-max type=date autocomplete=off form=filter-customers-orders-form /> </td>
+      <td> <input name=receive-date-min type=date autocomplete=off form=filter-customers-orders-form /> </td>
+      <td> <input name=receive-date-max type=date autocomplete=off form=filter-customers-orders-form /> </td>
+      <td>
+        <select name=is-received form=filter-customers-orders-form>
+          <option value="None"> - </option>
+          <option value="True"> True </option>
+          <option value="False"> False </option>
+        </select>
+      </td>
+      <td> <input name=cost-min type=number autocomplete=off placeholder="-" form=filter-customers-orders-form /> </td>
+      <td> <input name=cost-max type=number autocomplete=off placeholder="-" form=filter-customers-orders-form /> </td>
+      <td> <input type=submit value="Apply filter" form=filter-customers-orders-form /> </td>
+    </tr>
+  </table>
+  <form id=filter-customers-orders-form method=POST action="{{ url_for('orders.customers_orders_filtered') }}">
+  </form>
+
+
+  {% if orders|length > 0 %}
+    <table>
+      <th> <p> ID </th>
+      <th> <p> User email </th>
+      <th> <p> Creation date </th>
+      <th> <p> Expected receive date </th>
+      <th> <p> Receive date </th>
+      <th> <p> Cost </th>
+      {% for order in orders %}
+        <tr>
+          <td> <p> <a href="{{ url_for('orders.customer_order', order_id=order.order_id) }}"> {{ order.order_id }} </a></td>
+          <td> <p> {{ order.user.email }}</td>
+          <td> <p> {{ order.create_date }}</td>
+          <td> <p> {{ order.expect_receive_date }}</td>
+          <td> <p> {{ order.receive_date }}</td>
+          <td> <p> {{ order.cost }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <h3> There are no orders currently. </h3>
+  {% endif %}
+{% endblock %}

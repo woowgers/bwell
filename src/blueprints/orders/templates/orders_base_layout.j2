@@ -1,0 +1,25 @@
+{% extends 'base.j2' %}
+{% block content %}
+  {% if orders|length > 0 %}
+    <table>
+      <th> <p> ID </th>
+      <th> <p> User email </th>
+      <th> <p> Creation date </th>
+      <th> <p> Expected receive date </th>
+      <th> <p> Receive date </th>
+      <th> <p> Cost </th>
+      {% for order in orders %}
+        <tr>
+          <td> <p> {{ order.order_id }}</td>
+          <td> <p> {{ order.user.email }}</td>
+          <td> <p> {{ order.create_date }}</td>
+          <td> <p> {{ order.expect_receive_date }}</td>
+          <td> <p> {{ order.receive_date }}</td>
+          <td> <p> {{ order.cost }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <h3> There are no orders currently. </h3>
+  {% endif %}
+{% endblock %}

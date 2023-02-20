@@ -1,0 +1,52 @@
+{% extends 'base.j2' %}
+{% block title %} Customer order  {% endblock %}
+{% block header %} Customer order #{{ order.order_id }} {% endblock %}
+{% block content %}
+  <table>
+    <tr>
+      <td> <p> Client email: </td>
+      <td> <p> {{ user.email }} </td>
+    </tr>
+    <tr>
+      <td> <p> Cost </td>
+      <td> <p> {{ order.cost }} </td>
+    </tr>
+    <tr>
+      <td> <p> Creation date: </td>
+      <td> <p> {{ order.create_date }} </td>
+    </tr>
+    <tr>
+      <td> <p> Expected receive date </td>
+      <td> <p> {{ order.expect_receive_date }} </td>
+    </tr>
+    <tr>
+      {% if order.receive_date %}
+        <td> <p> Receive date </td>
+        <td> <input readonly type=date value="{{ order.receive_date }}" /> </td>
+      {% else %}
+        <td colspan=2> <input form=receive-order-form type="submit" value="Receive order"/> </td>
+      {% endif %}
+    </tr>
+  </table>
+  <form id=receive-order-form method=POST action="{{ url_for('orders.receive_customer_order', order_id=order.order_id) }}">
+  </form>
+  <h3> Order items: </h3>
+  <table>
+    <th> <p> Drug cipher </th>
+    <th> <p> Drug group </th>
+    <th> <p> Drug name </th>
+    <th> <p> Price </th>
+    <th> <p> Amount </th>
+    <th> <p> Total price </th>
+    {% for drug, price, amount in items %}
+      <tr>
+        <td> <input readonly value="{{ drug.cipher }}" /> </td>
+        <td> <p> {{ drug.drug_group.name }} </td>
+        <td> <p> {{ drug.name }} </td>
+        <td> <p> {{ price }} </td>
+        <td> <p> {{ amount }} </td>
+        <td> <p> {{ price * amount }} </td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock %}

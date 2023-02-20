@@ -2,7 +2,50 @@
 {% block title %} Pharmacy {% endblock %}
 {% block content %}
   <h1> Drugs in pharmacy </h1>
+  <h3> Item filter </h3>
+  <table>
+    <th> Group </th>
+    <th> Minimum price </th>
+    <th> Maximum price </th>
+    <th> </th>
+    <tr>
+      <td> <input placeholder="-" name=drug-group-name type=text list=drug-groups-list autocomplete=off form="filter-drug-form" /> </td>
+      <td> <input placeholder="-" name=price-min type=number autocomplete=off form="filter-drug-form" /> </td>
+      <td> <input placeholder="-" name=price-max type=number autocomplete=off form="filter-drug-form" /> </td>
+      <td> <input type=submit form="filter-drug-form" /> </td>
+    </tr>
+  </table>
+  <datalist id=drug-groups-list>
+    {% for group in drug_groups %}
+      <option value="{{ group.name }}" /> {# {{ group.name|capitalize }} </option> #}
+    {% endfor %}
+  </datalist>
+  <form id=filter-drug-form method=POST action="{{ url_for('pharmacy.items_filtered') }}"></form>
   {% if items|length > 0 %}
+    <table>
+      <th> <p> Cipher </th>
+      <th> <p> Group </th>
+      <th> <p> Name </th>
+      <th> <p> Price </th>
+      <th> <p> Amount </th>
+      <th colspan=2> Customer's cart </th>
+      {% for drug, price, amount in items %}
+        <tr>
+          <td> <input readonly value="{{ drug.cipher }}"> </td>
+          <td> <p> {{ drug.drug_group.name }} </td>
+          <td> <p> {{ drug.name }} </td>
+          <td> <p> {{ price }} </td>
+          <td> <p> {{ amount }} </td>
+          <td> <input name=amount form="{{ 'add-item-to-cart-' + drug.drug_id|string + '-' + price|string }}" type=number autocomplete=off> </td>
+          <td> <input form="{{ 'add-item-to-cart-' + drug.drug_id|string + '-' + price|string }}" type=submit value="Add to cart"> </td>
+          <input name=price form="{{ 'add-item-to-cart-' + drug.drug_id|string + '-' + price|string }}" type=hidden value="{{ price }}" />
+          <input name=drug-id form="{{ 'add-item-to-cart-' + drug.drug_id|string + '-' + price|string }}" type=hidden value="{{ drug.drug_id }}" />
+        </tr>
+      {% endfor %}
+    </table>
+    {% for drug, price, amount in items %}
+      <form id="{{ 'add-item-to-cart-' + drug.drug_id|string + '-' + price|string }}" method=POST action="{{ url_for('cart.add_to_customer_cart') }}"></form>
+    {% endfor %}
   {% else %}
     <h3> There are no drugs currently. </h3>
   {% endif %}

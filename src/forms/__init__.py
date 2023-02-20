@@ -8,6 +8,8 @@ import math
 from helpers.flashes import flash_error
 from helpers import dict_to_snake_case, to_user_friendly
 
+from db.models import Order
+
 
 """
  -- Bases --
@@ -15,11 +17,8 @@ from helpers import dict_to_snake_case, to_user_friendly
 
 
 class Field(ABC):
-    """
-    Base descriptor class for fields.
-
-    Derived classes should implement
-    """
+    def __init__(self, required=True):
+        self.required = required
 
     def __set_name__(self, owner: "Form", name: str):
         if not isinstance(owner, type) or not issubclass(owner, Form):
@@ -62,7 +61,7 @@ class FormMeta(type):
                     f"`{cls_name}.{prop_method}` should be decorated with `@property`"
                 )
 
-        self._field_descs = {}
+        self._field_descs: dict[str, Field] = {}
 
         for field_name, field_desc in self.__dict__.items():
             if isinstance(field_desc, Field):
@@ -97,7 +96,7 @@ class Form(metaclass=FormMeta):
     def is_valid(self) -> bool:
         field_descs = self.__class__._field_descs
         for field_name, field_value in self._invalid_fields.items():
-            if field_value is None:
+            if field_value is None and self.__class__._field_descs[field_name].required:
                 self._on_none_field(field_name)
             else:
                 self._on_invalid_field(field_name, field_descs[field_name])
@@ -117,8 +116,35 @@ class Form(metaclass=FormMeta):
 """
 
 
+class BooleanField(Field):
+    def __get__(self, obj: Form, _=None) -> t.Union[bool, None, "BooleanField"]:
+        value = obj._fields[self.name]
+        if value:
+            if value.lower() == "true":
+                return True
+            if value.lower() == "false":
+                return False
+                
+
+    def is_valid(self, value):
+        if value is None:
+            return True
+        if not isinstance(value, str) and not isinstance(value, bool):
+            return False
+        try:
+            bool(value)
+            return True
+        except (ValueError, TypeError):
+            return False
+
+    @property
+    def validation_requirements(self) -> str:
+        return f"{to_user_friendly(self.name)} must be either set to true/false or unset."
+
+
 class StringField(Field):
-    def __init__(self, minlen: int = 0, maxlen: int = t.cast(int, math.inf)):
+    def __init__(self, minlen: int = 0, maxlen: int = t.cast(int, math.inf), *args, **kwargs):
+        super().__init__(*args, **kwargs)
         if minlen > maxlen:
             raise ValueError(
                 f"{to_user_friendly(self.name)} minimum length must not be greater than maximum length."
@@ -127,6 +153,8 @@ class StringField(Field):
         self.maxlen = maxlen
 
     def is_valid(self, value) -> bool:
+        if value is None:
+            return True
         return isinstance(value, str) and self.minlen <= len(value) <= self.maxlen
 
     @property
@@ -146,6 +174,8 @@ class IntegerField(Field):
         self.maxval = maxval
 
     def is_valid(self, value) -> bool:
+        if value is None:
+            return True
         try:
             return self.minval <= int(value) <= self.maxval
         except (TypeError, ValueError):
@@ -165,8 +195,9 @@ class IntegerField(Field):
 
 class FloatField(Field):
     def __init__(
-        self, minval: float = float(-math.inf), maxval: float = float(math.inf)
+        self, minval: float = float(-math.inf), maxval: float = float(math.inf), required=True
     ):
+        super().__init__(required)
         if minval > maxval:
             raise ValueError(
                 f'"{to_user_friendly(self.name)}" must not be greater than maximum value.'
@@ -175,6 +206,8 @@ class FloatField(Field):
         self.maxval = maxval
 
     def is_valid(self, value) -> bool:
+        if value is None:
+            return True
         try:
             return self.minval <= float(value) <= self.maxval
         except (TypeError, ValueError):
@@ -230,6 +263,8 @@ class UserTypeField(Field):
 
 class DateField(Field):
     def is_valid(self, value) -> bool:
+        if value is None:
+            return True
         return date_is_valid(value)
 
     def __get__(self, obj: Form, _=None) -> t.Union[datetime.date, "DateField", None]:
@@ -324,11 +359,76 @@ class AddItemToCartForm(Form):
     amount = IntegerField(minval=1)
 
 
-class AddItemToCartFormWithID(Form):
-    item_id = IntegerField()
+class AddItemToCustomerCartForm(Form):
+    drug_id = IntegerField()
+    price = FloatField()
     amount = IntegerField(minval=1)
 
 
 class ChangeItemAmountForm(Form):
     item_id = IntegerField()
     amount = IntegerField(minval=0)
+
+
+class ChangeCustomerCartItemAmountForm(Form):
+    drug_id = IntegerField()
+    price = FloatField()
+    amount = IntegerField()
+
+
+class OrderFilterForm(Form):
+    create_date_min = DateField(required=False)
+    create_date_max = DateField(required=False)
+    receive_date_min = DateField(required=False)
+    receive_date_max = DateField(required=False)
+    cost_min = FloatField(required=False)
+    cost_max = FloatField(required=False)
+    is_received = BooleanField(required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.checkers = []
+        if self.receive_date_min:
+            self.checkers.append(lambda order: order.receive_date >= self.receive_date_min)
+        if self.receive_date_max:
+            self.checkers.append(lambda order: order.receive_date <= self.receive_date_max)
+        if self.create_date_min:
+            self.checkers.append(lambda order: order.create_date >= self.create_date_min)
+        if self.create_date_max:
+            self.checkers.append(lambda order: order.create_date <= self.create_date_max)
+        if self.cost_min:
+            self.checkers.append(lambda order: order.cost >= self.cost_min)
+        if self.cost_max:
+            self.checkers.append(lambda order: order.cost <= self.cost_max)
+
+    @property
+    def is_valid(self) -> bool:
+        is_valid = super().is_valid
+        if not self.is_received and (self.receive_date_min or self.receive_date_max):
+            flash_error("Either choose range of receive date, or set `Is received` to false.")
+            is_valid = False
+        if (isinstance(self.cost_min, float) and isinstance(self.cost_max, float) and self.cost_min > self.cost_max):
+            flash_error("Minimum cost must not be greater than maximum cost.")
+            is_valid = False
+        if (isinstance(self.create_date_min, datetime.date) and isinstance(self.create_date_max, datetime.date) and self.create_date_min > self.create_date_max):
+            flash_error("Minimum create date must not be greater than maximum create date.")
+            is_valid = False
+        if (isinstance(self.receive_date_min, datetime.date) and isinstance(self.receive_date_max, datetime.date) and self.receive_date_min > self.receive_date_max):
+            flash_error("Minimum receive date must not be greater than maximum receive date.")
+            is_valid = False
+
+        return is_valid
+
+
+    def filter(self, order: Order) -> bool:
+        for checker in self.checkers:
+            if not checker(order):
+                return False
+        return True
+
+
+class DrugFilterForm(Form):
+    drug_group_name = StringField(required=False)
+    price_min = FloatField(required=False)
+    price_max = FloatField(required=False)
+

@@ -45,6 +45,30 @@ def db_get_drugs(db: DBCursor) -> tuple[Drug]:
     return tuple(Drug.from_primitives(*drug_tuple) for drug_tuple in drug_tuples)
 
 
+def db_get_drug(db: DBCursor, drug_id) -> Drug:
+    SQL_QUERY = """
+        SELECT
+            drug.drug_id,
+            drug_group.drug_group_id,
+            drug_group.name,
+            drug.cipher,
+            drug.name,
+            manufacturer.manufacturer_id,
+            country.country_id,
+            country.name,
+            manufacturer.name
+        FROM
+            drug
+            JOIN drug_group USING (drug_group_id)
+            JOIN manufacturer USING (manufacturer_id)
+            JOIN country USING (country_id)
+    """
+    drug_tuples = db_execute(db, SQL_QUERY, (drug_id,))
+    if not drug_tuples:
+        raise ModelError(f"Drug with ID={drug_id} does not exist.")
+    return Drug.from_primitives(*drug_tuples[0])
+
+
 def db_get_drug_names(db: DBCursor) -> tuple[str]:
     SQL_QUERY = """
         SELECT DISTINCT name

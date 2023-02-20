@@ -94,7 +94,11 @@ def init_db(schema_directory):
         exit(1)
 
     if not database_exists(engine.url):
-        click.echo(click.style(f"Database {schema} does not exist. Creating databse...", fg="yellow"))
+        click.echo(
+            click.style(
+                f"Database {schema} does not exist. Creating databse...", fg="yellow"
+            )
+        )
         create_database(engine.url)
 
     click.echo(

@@ -165,7 +165,31 @@ class Item:
 @dataclass
 class Order:
     order_id: int
+    user: User
     create_date: datetime.date
     expect_receive_date: datetime.date
     receive_date: t.Optional[datetime.date] = None
     cost: t.Optional[float] = 0
+
+    @classmethod
+    def from_primitives(
+        cls,
+        order_id: int,
+        user_id: int,
+        user_email: str,
+        user_type: UserType,
+        user_name: str,
+        user_pw_hash: bytes,
+        create_date: datetime.date,
+        expect_receive_date: datetime.date,
+        receive_date: t.Optional[datetime.date],
+        cost: float,
+    ) -> "Order":
+        return cls(
+            order_id,
+            User(user_id, user_email, user_type, user_name, user_pw_hash),
+            create_date,
+            expect_receive_date,
+            receive_date,
+            cost,
+        )

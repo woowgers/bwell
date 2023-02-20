@@ -1,8 +1,43 @@
-{% extends 'base_cart_layout.j2' %}
+{% extends 'base.j2' %}
 
 {% block title %} Customer's cart {% endblock %}
 {% block header %} Your customer's cart {% endblock %}
 
-{% block change_amount_form %}
-  {{ url_for('cart.customer_cart_change_amount') }}
+{% block content %}
+  {% if items|length > 0 %}
+    <table>
+        <tr>
+            <th> <p> Cipher </th>
+            <th> <p> Drug group </th>
+            <th> <p> Name </th>
+            <th> <p> Manufacturer </th>
+            <th> <p> Price </th>
+            <th colspan=2> <p> Amount in pharmacy </th>
+        </tr>
+        {% for drug, price, amount in items %}
+          <tr>
+            <td> <input readonly value="{{ drug.cipher }}"> </td>
+            <td> <p> {{ drug.drug_group.name }} </td>
+            <td> <p> {{ drug.name }} </td>
+            <td> <p> {{ drug.manufacturer.name }} </td>
+            <td> <p> {{ price }} </td>
+            <input name=drug-id type=hidden value="{{ drug.drug_id }}" form="{{ 'update-amount-form' + drug.drug_id|string + '-' + price|string }}" />
+            <input name=price type=hidden value="{{ price }}" form="{{ 'update-amount-form' + drug.drug_id|string + '-' + price|string }}" />
+            <td> <input name=amount type=number value="{{ amount }}" form="{{ 'update-amount-form' + drug.drug_id|string + '-' + price|string }}" /> </td>
+            <td> <input type=submit value="Change amount" form="{{ 'update-amount-form' + drug.drug_id|string + '-' + price|string }}" /> </td>
+          </tr>
+        {% endfor %}
+    </table>
+    {% for drug, price, amount in items %}
+      <form id="{{ 'update-amount-form' + drug.drug_id|string + '-' + price|string }}"
+            method=POST
+            action="{{ url_for('cart.customer_cart_change_item_amount') }}">
+      </form>
+    {% endfor %}
+    <form method=POST action="{{ url_for('cart.order_customer_cart', user_id=user.user_id) }}">
+        <input type=Submit value="Make order">
+    </form>
+  {% else %}
+    <h3> There's nothing in your cart currently. </h3>
+  {% endif %}
 {% endblock %}

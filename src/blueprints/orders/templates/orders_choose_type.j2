@@ -1,0 +1,9 @@
+{% extends 'base.j2' %}
+{% block title %} Choose orders type {% endblock %}
+{% block header %} Choose orders type {% endblock %}
+{% block content %}
+  <ul>
+    <li> <a href="{{ url_for('orders.admins_orders') }}"> Admins orders </li>
+    <li> <a href="{{ url_for('orders.customers_orders') }}"> Customers orders </li>
+  </ul>
+{% endblock %}
