@@ -36,10 +36,10 @@
           <td> <p> {{ drug.name }} </td>
           <td> <p> {{ price }} </td>
           <td> <p> {{ amount }} </td>
-          <td> <input name=amount form="{{ 'add-item-to-cart-' + drug.drug_id|string + '-' + price|string }}" type=number autocomplete=off> </td>
-          <td> <input form="{{ 'add-item-to-cart-' + drug.drug_id|string + '-' + price|string }}" type=submit value="Add to cart"> </td>
           <input name=price form="{{ 'add-item-to-cart-' + drug.drug_id|string + '-' + price|string }}" type=hidden value="{{ price }}" />
           <input name=drug-id form="{{ 'add-item-to-cart-' + drug.drug_id|string + '-' + price|string }}" type=hidden value="{{ drug.drug_id }}" />
+          <td> <input name=amount form="{{ 'add-item-to-cart-' + drug.drug_id|string + '-' + price|string }}" type=number autocomplete=off> </td>
+          <td> <input form="{{ 'add-item-to-cart-' + drug.drug_id|string + '-' + price|string }}" type=submit value="Add to cart"> </td>
         </tr>
       {% endfor %}
     </table>
