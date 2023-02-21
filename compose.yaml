@@ -15,14 +15,18 @@ services:
     restart: "no"
     command: /bin/bash /app/bin/run-app.sh
 
-  postgres:
+  db:
     image: postgres:14
     volumes:
       - db_data:/var/lib/postgresql/data
     env_file:
       - .env
     ports:
-      - "5432:${POSTGRES_PORT}"
+      - "7432:7432"
+    environment:
+      POSTGRES_USER: python
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: bwell
     restart: "no"
 
 volumes:

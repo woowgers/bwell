@@ -68,7 +68,7 @@ def db_add_vendor(
 ) -> None:
     SQL_QUERY = """
         INSERT INTO vendor (cipher, company_name, city_id, conclusion_date)
-        VALUE (%s, %s, %s, %s)
+        VALUES (%s, %s, %s, %s)
     """
 
     city = db_get_city_by_name_create_if_not_exists(db, city_name)

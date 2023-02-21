@@ -9,11 +9,6 @@
         <li> <a href={{ url_for('auth.login') }}> Log In </a> </li>
         <li> <a href={{ url_for('account.read') }}> Inspect your account </a> </li>
         <li> <a href="{{ url_for('account.accounts') }}"> Inspect other users accounts </a> </li>
-        <li> <a href={{ url_for('manufacturers.read') }}> Inspect manufacturers </a> </li>
-        <li> <a href="{{ url_for('vendors.read') }}"> Inspect vendors </a> </li>
-        <li> <a href="{{ url_for('drugs.read') }}"> Inspect drugs </a> </li>
-        <li> <a href="{{ url_for('cart.read') }}"> Use cart </a> </li>
-        <li> <a href="{{ url_for('orders.read') }}"> Inspect orders </a> </li>
 
         {% if user and user.is_admin  %}
             {# display admin-only features here #}

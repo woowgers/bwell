@@ -75,7 +75,7 @@ def db_get_manufacturer_by_name(db: DBCursor, mf_name) -> Manufacturer:
 
 def db_add_manufacturer(db: DBCursor, country_name, company_name) -> None:
     SQL_QUERY = """
-        INSERT INTO manufacturer (country_id, name) VALUE (%s, %s)
+        INSERT INTO manufacturer (country_id, name) VALUES (%s, %s)
     """
 
     companies = db_get_manufacturer_companies(db)

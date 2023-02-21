@@ -56,7 +56,7 @@ def db_get_drug_names(db: DBCursor) -> tuple[str]:
 def db_add_drug(db: DBCursor, mf_id, drug_cipher, drug_group_name, drug_name) -> None:
     SQL_QUERY = """
         INSERT INTO drug (drug_group_id, cipher, name, manufacturer_id)
-        VALUE (%s, %s, %s, %s)
+        VALUES (%s, %s, %s, %s)
     """
     manufacturer = db_get_manufacturer(db, mf_id)
     drug_group = db_get_drug_group_by_name_create_if_not_exists(db, drug_group_name)

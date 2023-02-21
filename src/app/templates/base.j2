@@ -13,7 +13,6 @@
 
 <body>
 
-
   <div id=flashes-container>
 
     {% with errors = get_flashed_messages(category_filter=['error']) %}
@@ -52,13 +51,7 @@
     <a id=logo-link href={{ url_for('read') }}> <img src={{ url_for('static', filename='icon.png') }} /> </a>
     <a href={{ url_for('read') }}> Home </a>
     <a href={{ url_for('account.read') }}> My account </a>
-    <a href={{ url_for('cart.read') }}> Cart </a>
-    {% if user and user.is_admin %}
-      <a href={{ url_for('account.accounts') }}> Other users </a>
-      <a href={{ url_for('manufacturers.read') }}> Manufacturers </a>
-      <a href={{ url_for('vendors.read') }}> Vendors </a>
-      <a href={{ url_for('drugs.read') }}> Drugs </a>
-    {% endif %}
+    <a href={{ url_for('account.accounts') }}> Other users </a>
     <div id=navbar-spacer> </div>
     {% if user %}
       <a id=navbar-logout-button>
