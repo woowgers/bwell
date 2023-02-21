@@ -40,17 +40,11 @@ def init_db(schema_directory):
     for path in paths:
         click.echo(f"\t{path}")
 
-    click.echo(f"Connecting to PostgreSQL via URL: {engine.url}")
     with engine.connect() as con:
         for path in paths:
+            click.echo(f"Reading {path}...")
             with current_app.open_resource(path, mode='r') as f:
                 code = f.read()
-            click.echo(click.style(f"Executing {path}...", fg="yellow"))
-            try:
-                con.execute(text(code))
-            except Exception as error:
-                click.echo(
-                    click.style(f"Failed to execute {path}:", fg="red") + f"\n{error}"
-                )
-                raise
+            click.echo(f"Executing {path}...")
+            con.execute(text(code))
         con.commit()

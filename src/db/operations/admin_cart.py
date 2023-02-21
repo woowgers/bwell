@@ -57,7 +57,7 @@ def db_get_admin_cart_item_amount(db: DBCursor, user_id, item_id) -> int:
 def db_push_admin_cart_item_amount(db: DBCursor, user_id, item_id, amount) -> None:
     SQL_QUERY = """
         INSERT INTO admin_cart_has_item (user_id, item_id, amount)
-        VALUE (%s, %s, %s)
+        VALUES (%s, %s, %s)
         ON DUPLICATE KEY UPDATE amount = amount + %s
     """
 

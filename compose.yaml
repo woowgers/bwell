@@ -21,8 +21,6 @@ services:
       - db_data:/var/lib/postgresql/data
     env_file:
       - .env
-    environment:
-      POSTGRES_PORT: ${POSTGRES_PORT}
     ports:
       - "7432:${POSTGRES_PORT}"
     restart: "no"

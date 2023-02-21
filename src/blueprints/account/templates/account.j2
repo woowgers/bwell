@@ -29,7 +29,7 @@
     <form method="POST" action="{{ url_for("account.logout") }}">
         <input type=submit value="Log out" />
     </form>
-    <form method="POST" action="{{ url_for("account.delete_account", user_id=user.user_id) }}">
+    <form method="POST" action="{{ url_for("account.delete_my_account", user_id=user.user_id) }}">
         <input type=submit value="Delete my account" />
     </form>
   {% else %}

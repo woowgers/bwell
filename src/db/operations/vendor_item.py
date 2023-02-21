@@ -96,7 +96,7 @@ def db_get_vendor_storefront_item_amount(db: DBCursor, item_id) -> tuple[Item, i
 def db_add_vendor_item(db: DBCursor, vendor_id, drug_id, price) -> None:
     SQL_QUERY = """
         INSERT INTO vendor_item (vendor_id, drug_id, price)
-        VALUE (%s, %s, %s)
+        VALUES (%s, %s, %s)
     """
     db_execute(db, SQL_QUERY, (vendor_id, drug_id, price))
 

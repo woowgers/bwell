@@ -22,7 +22,7 @@ COPY --chown=python:python ./src/ ./
 COPY --chown=python:python ./requirements.txt ./requirements.txt
 COPY --chown=python:python ./bin/ ./bin/
 
-RUN pip install --no-cache-dir -r requirements.txt \
-    && chmod +x ./bin/*
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt && \
+    chmod +x ./bin/*
 
-# sas kok

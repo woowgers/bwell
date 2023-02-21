@@ -50,11 +50,11 @@ def db_execute(
     try:
         db.execute(statement, params, **kwargs)
     except (
-        DBOperationalError,
-        DBProgrammingError,
-        DBInterfaceError,
-        DBInternalError,
-    ) as error:
+            DBOperationalError,
+            DBProgrammingError,
+            DBInterfaceError,
+            DBInternalError,
+            ) as error:
         flash(f'Database usage error: "{error}".', category="error")
 
     try:
