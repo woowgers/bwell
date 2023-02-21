@@ -1,25 +1,21 @@
 from flask import flash
-import mysql.connector
-import mysql.connector.cursor
-import mysql.connector.types
+import psycopg2
+import psycopg2._psycopg
 
 from .models import *
 
 import typing as t
 
 
-DBError = mysql.connector.Error
-DBIntegrityError = mysql.connector.IntegrityError
-DBOperationalError = mysql.connector.OperationalError
-DBProgrammingError = mysql.connector.ProgrammingError
-DBInterfaceError = mysql.connector.InterfaceError
-DBInternalError = mysql.connector.InternalError
+DBError = psycopg2.Error
+DBIntegrityError = psycopg2.IntegrityError
+DBOperationalError = psycopg2.OperationalError
+DBProgrammingError = psycopg2.ProgrammingError
+DBInterfaceError = psycopg2.InterfaceError
+DBInternalError = psycopg2.InternalError
 
-DBConnection = t.Union[
-    mysql.connector.connection.MySQLConnection,
-    mysql.connector.pooling.PooledMySQLConnection,
-]
-DBCursor = mysql.connector.cursor.MySQLCursor
+DBConnection = psycopg2._psycopg.connection
+DBCursor = psycopg2._psycopg.cursor
 
 
 ModelError = DBIntegrityError
@@ -27,7 +23,7 @@ ModelError = DBIntegrityError
 
 class DefaultModelError(ModelError):
     def __init__(self, error: DBIntegrityError):
-        return super().__init__(f"Unexpected database error: {error}.")
+        super().__init__(f"Unexpected database error: {error}.")
 
 
 global __connection
@@ -36,7 +32,7 @@ __connection: DBConnection
 
 def get_db(**config) -> DBCursor:
     global __connection
-    __connection = mysql.connector.connect(**config)
+    __connection = psycopg2.connect(**config)
     return __connection.cursor()
 
 

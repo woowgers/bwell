@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 APP_PATH="$(dirname $0)/src/app"
 

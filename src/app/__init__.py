@@ -1,12 +1,8 @@
 from flask import Flask, render_template
-import click
-
-import os
-from pathlib import Path
 
 from db import *
 from helpers import *
-from commands import init_db, init_instance
+from commands import init_db
 from db.models import UserType
 from proxies import close_db_proxy, user
 
@@ -31,42 +27,14 @@ def app_register_blueprints(app: Flask) -> None:
     app.register_blueprint(vendors_bp)
 
 
-def app_configure_instance(app: Flask) -> None:
-    if os.path.exists(app.instance_path):
-        app.config.from_pyfile("config.py")
-    else:
-        click.echo(
-            click.style(
-                "No instance folder found. You should run `init-instance` command.",
-                fg="red",
-                bold=True,
-            )
-        )
-        return
-
-    if not app.config.get("SECRET_KEY"):
-        click.echo(
-            click.style(
-                'No "SECRET_KEY" found in app configuration. You should re-run `init-instance` command.',
-                fg="red",
-                bold=True,
-            )
-        )
-
-
 def create_app() -> Flask:
-    app = Flask(
-        __name__,
-        instance_path=str(Path(__file__).parents[2] / "instance"),
-        instance_relative_config=True,
-    )
+    app = Flask(__name__)
+    app.config.from_pyfile("config.py")
     app.jinja_env.globals.update(
         user=user, UserType=UserType, apostrophe_appended=apostrophe_appended
     )
-    app.cli.add_command(init_instance)
     app.cli.add_command(init_db)
 
-    app_configure_instance(app)
     app_register_blueprints(app)
 
     app.teardown_appcontext(close_db_proxy)
