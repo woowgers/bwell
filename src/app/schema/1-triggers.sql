@@ -21,6 +21,7 @@ begin
     if _country_n_occurrences = 0 then
         delete from country where country_id = old.country_id;
     end if;
+    return old;
 end $manufacturer_delete_country$ language plpgsql;
 create trigger manufacturer_delete_country after delete on manufacturer for each row
     execute function manufacturer_delete_country();
@@ -35,6 +36,7 @@ begin
     if _group_n_occurrences = 0 then
         delete from drug_group where drug_group_id = old.drug_group_id;
     end if;
+    return old;
 end $drug_delete_drug_group$ language plpgsql;
 create trigger drug_delete_drug_group after delete on drug for row
     execute function drug_delete_drug_group();
@@ -49,6 +51,7 @@ begin
     if _city_n_occurrences = 0 then
         delete from city where city_id = old.city_id;
     end if;
+    return old;
 end $vendor_delete_city$ language plpgsql;
 create trigger vendor_delete_city after delete on vendor for each row
     execute function vendor_delete_city();
