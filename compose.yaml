@@ -13,7 +13,7 @@ services:
     depends_on:
       - postgres
     restart: "no"
-    command: /bin/bash /app/bin/run-app.sh
+    command: /app/bin/run-app.sh
 
   postgres:
     image: postgres:14

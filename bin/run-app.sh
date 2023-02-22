@@ -1,4 +1,8 @@
+#!/bin/bash
 set -e
 
-flask init-db
-flask --debug run --host=0.0.0.0
+if [ $# -eq 0 ]; then
+  flask --debug run --host=0.0.0.0
+else
+  flask "$@"
+fi
