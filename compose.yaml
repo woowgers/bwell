@@ -22,7 +22,7 @@ services:
     env_file:
       - .env
     ports:
-      - "7432:${POSTGRES_PORT}"
+      - "5432:${POSTGRES_PORT}"
     restart: "no"
 
 volumes:

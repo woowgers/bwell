@@ -44,7 +44,7 @@ insert into drug_group (name) values
 ('Муколитическое');
 
 
-insert into drug (drug_group_id, cipher, name, manufacturer_id) values
+insert into drug (drug_group_id, drug_id, name, manufacturer_id) values
 (1, gen_random_uuid(), 'Аспирин', 1),
 (1, gen_random_uuid(), 'Аспирин', 2),
 (1, gen_random_uuid(), 'Аспирин', 3),
@@ -74,9 +74,8 @@ insert into city (name) values
 ('Тула'),
 ('Санкт-Петербург'),
 ('Краснодар');
-select * from city order by city_id;
 
-insert into vendor (cipher, company_name, city_id, conclusion_date) values
+insert into vendor (vendor_id, company_name, city_id, conclusion_date) values
 (gen_random_uuid(), 'АРГЕНТУМ', 2, '2020-06-24'),
 (gen_random_uuid(), 'Главфарм', 1, '2019-10-14'),
 (gen_random_uuid(), 'Alliance Healthcare', 1, '2017-06-07'),

@@ -1,7 +1,7 @@
 drop procedure if exists get_country_create_if_not_exists;
 create procedure get_country_create_if_not_exists(
     inout _country_id integer,
-    inout _name varchar(256)
+    inout _name Naming
 )
     language plpgsql
     as $$
@@ -13,3 +13,5 @@ begin
     end if;
     commit;
 end $$;
+
+call get_country_create_if_not_exists(null, 'Africa');

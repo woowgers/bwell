@@ -4,7 +4,8 @@ from db import *
 def db_push_customer_cart_item_amount(db: DBCursor, user_id, drug_id, price, amount) -> None:
     SQL_QUERY = """
         INSERT INTO customer_cart_has_drug (user_id, drug_id, price, amount)
-        VALUE (%s, %s, %s, %s)
+        VALUES (%s, %s, %s, %s)
+        ON CONFLICT (user_id, drug_id, price)
         ON DUPLICATE KEY UPDATE amount = amount + %s
     """
 

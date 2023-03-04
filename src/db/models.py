@@ -193,3 +193,4 @@ class Order:
             receive_date,
             cost,
         )
+

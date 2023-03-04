@@ -25,7 +25,7 @@ def admin_rights_required(handler: ViewHandler) -> ViewHandler:
     @wraps(handler)
     def wrapper(*args, **kwargs):
         if not user or not user.is_admin:
-            flash_error(f"Only administrator has rights for this operation")
+            flash_error(f"Only administrator has rights for this operation.")
             return redirect(url_for("auth.login"))
         return handler(*args, **kwargs)
 
