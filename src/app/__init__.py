@@ -44,3 +44,6 @@ def create_app() -> Flask:
         return render_template("index.j2")
 
     return app
+
+
+app = create_app()
