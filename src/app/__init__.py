@@ -11,18 +11,18 @@ def app_register_blueprints(app: Flask) -> None:
     from blueprints.account import bp as account_bp
     from blueprints.auth import bp as auth_bp
     from blueprints.cart import bp as cart_bp
-    from blueprints.drugs import bp as drugs_bp
-    from blueprints.manufacturers import bp as manufacturers_bp
-    from blueprints.orders import bp as orders_bp
+    from blueprints.drug import bp as drug_bp
+    from blueprints.manufacturer import bp as manufacturer_bp
+    from blueprints.order import bp as order_bp
     from blueprints.pharmacy import bp as pharmacy_bp
     from blueprints.vendors import bp as vendors_bp
 
     app.register_blueprint(account_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(cart_bp)
-    app.register_blueprint(drugs_bp)
-    app.register_blueprint(manufacturers_bp)
-    app.register_blueprint(orders_bp)
+    app.register_blueprint(drug_bp)
+    app.register_blueprint(manufacturer_bp)
+    app.register_blueprint(order_bp)
     app.register_blueprint(pharmacy_bp)
     app.register_blueprint(vendors_bp)
 
