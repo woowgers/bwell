@@ -11,14 +11,15 @@ from sqlalchemy import text
 @click.command("init-db", help="Initialize database from SQL source directory")
 @click.argument("schema-directory", default="schema")
 def init_db(schema_directory):
-    db_config = current_app.config['DATABASE']
-    host = db_config['host']
-    port = db_config['port']
-    schema = db_config['database']
-    user = db_config['user']
-    password = db_config['password']
+    db_config = current_app.config["DATABASE"]
+    host = db_config["host"]
+    port = db_config["port"]
+    schema = db_config["database"]
+    user = db_config["user"]
+    password = db_config["password"]
     engine = create_engine(
-        f"postgresql+psycopg2://{user}:{password}@{host}:{port}/{schema}", pool_timeout=280
+        f"postgresql+psycopg2://{user}:{password}@{host}:{port}/{schema}",
+        pool_timeout=280,
     )
 
     if not os.path.exists(schema_directory):
@@ -43,8 +44,9 @@ def init_db(schema_directory):
     with engine.connect() as con:
         for path in paths:
             click.echo(f"Reading {path}...")
-            with current_app.open_resource(path, mode='r') as f:
+            with current_app.open_resource(path, mode="r") as f:
                 code = f.read()
             click.echo(f"Executing {path}...")
             con.execute(text(code))
         con.commit()
+
