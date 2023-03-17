@@ -9,9 +9,9 @@ from db.models import *
 
 
 bp = Blueprint(
-    "vendors",
+    "vendor",
     __name__,
-    url_prefix="/vendors",
+    url_prefix="/vendor",
     static_folder="static",
     template_folder="templates",
 )
@@ -19,7 +19,7 @@ bp = Blueprint(
 
 @bp.get("/")
 @admin_rights_required
-def read():
+def all():
     return render_template(
         "vendors.j2", cities=db_get_cities(db), vendors=db_get_vendors(db)
     )
@@ -27,12 +27,12 @@ def read():
 
 @bp.post("/")
 @admin_rights_required
-def add_vendor():
-    form = VendorRegisterForm(request.form.to_dict())
+def add():
+    form = VendorRegisterForm(fields_dict=request.form.to_dict())
     if not form.is_valid:
         return redirect(url_for("vendors.read"))
 
-    try:
+    with ModelWebUIContext():
         db_add_vendor(
             db,
             form.cipher,
@@ -40,19 +40,15 @@ def add_vendor():
             form.city_name,
             form.agreement_conclusion_date,
         )
-    except ModelError as error:
-        flash_error(error)
 
     return redirect(request.referrer)
 
 
 @bp.post("/<int:vendor_id>/delete")
 @admin_rights_required
-def delete_vendor(vendor_id: int):
-    try:
+def delete(vendor_id: int):
+    with ModelWebUIContext():
         db_delete_vendor(db, vendor_id)
-    except ModelError as error:
-        flash_error(error)
 
     return redirect(request.referrer)
 
@@ -60,14 +56,12 @@ def delete_vendor(vendor_id: int):
 @bp.post("/<int:vendor_id>/terminate-agreement")
 @admin_rights_required
 def terminate_agreement(vendor_id: int):
-    form = VendorAgreementTerminationForm(request.form.to_dict())
+    form = VendorAgreementTerminationForm(fields_dict=request.form.to_dict())
     if not form.is_valid:
         return redirect(url_for("vendors.read"))
 
-    try:
+    with ModelWebUIContext():
         db_vendor_terminate_agreement(db, vendor_id, form.termination_date)
-    except ModelError as error:
-        flash_error(error)
 
     return redirect(request.referrer)
 
@@ -76,9 +70,9 @@ def terminate_agreement(vendor_id: int):
 @admin_rights_required
 def items(vendor_id: int):
     try:
-        vendor = db_get_vendor(db, vendor_id)
-    except ModelError as error:
-        flash_error(error)
+        with ModelWebUIContext():
+            vendor = db_get_vendor(db, vendor_id)
+    except (ModelError, DBUsageError):
         return redirect(request.referrer)
 
     return render_template(
@@ -93,15 +87,12 @@ def items(vendor_id: int):
 @bp.post("/<int:vendor_id>/items/add")
 @admin_rights_required
 def add_item(vendor_id: int):
-    form = VendorAddItemForm(request.form.to_dict())
+    form = VendorAddItemForm(fields_dict=request.form.to_dict())
     if not form.is_valid:
         return redirect(url_for("vendors.items", vendor_id=vendor_id))
 
-    try:
+    with ModelWebUIContext():
         db_add_vendor_item(db, vendor_id, form.drug_id, form.price)
-    except ModelError as error:
-        flash_error(error)
-        return redirect(request.referrer)
 
     return redirect(request.referrer)
 
@@ -109,14 +100,12 @@ def add_item(vendor_id: int):
 @bp.post("/<int:vendor_id>/storefront/add")
 @admin_rights_required
 def add_storefront_item(vendor_id: int):
-    form = VendorAddStorefrontItemForm(request.form.to_dict())
+    form = VendorAddStorefrontItemForm(fields_dict=request.form.to_dict())
     if not form.is_valid:
         return redirect(request.referrer)
 
-    try:
+    with ModelWebUIContext():
         db_add_vendor_storefront_item(db, vendor_id, form.item_id, form.amount)
-    except ModelError as error:
-        flash_error(error)
 
     return redirect(request.referrer)
 
@@ -124,20 +113,14 @@ def add_storefront_item(vendor_id: int):
 @bp.post("/items/delete/<int:item_id>")
 @admin_rights_required
 def delete_item(item_id: int):
-    try:
+    with ModelWebUIContext():
         db_delete_vendor_item(db, item_id)
-    except ModelError as error:
-        flash_error(error)
-
     return redirect(request.referrer)
 
 
 @bp.post("/<int:vendor_id>/storefront/delete/<int:item_id>")
 @admin_rights_required
 def delete_storefront_item(vendor_id: int, item_id: int):
-    try:
+    with ModelWebUIContext():
         db_delete_vendor_storefront_item(db, vendor_id, item_id)
-    except ModelError as error:
-        flash_error(error)
-
     return redirect(request.referrer)

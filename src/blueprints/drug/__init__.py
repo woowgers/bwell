@@ -18,7 +18,7 @@ bp = Blueprint(
 
 @bp.route("/")
 @admin_rights_required
-def read():
+def all():
     manufacturers = db_get_manufacturers(db)
     if len(manufacturers) == 0:
         flash_info(
@@ -61,12 +61,9 @@ def post():
     return redirect(request.referrer)
 
 
-@bp.post("/delete-drug/<int:drug_id>")
+@bp.post("/delete/<int:drug_id>")
 @admin_rights_required
-def delete_drug(drug_id):
-    try:
+def delete(drug_id):
+    with ModelWebUIContext():
         db_delete_drug(db, drug_id)
-    except ModelError as error:
-        flash_error(error)
-
-    return redirect(url_for("drugs.read"))
+    return redirect(url_for("drug.all"))

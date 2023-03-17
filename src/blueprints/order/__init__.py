@@ -8,9 +8,9 @@ from db import *
 
 
 bp = Blueprint(
-    "orders",
+    "order",
     __name__,
-    url_prefix="/orders",
+    url_prefix="/order",
     static_folder="static",
     template_folder="templates",
 )
@@ -18,13 +18,13 @@ bp = Blueprint(
 
 @bp.get("/")
 @cashier_rights_required
-def read():
+def all():
     return render_template("orders_choose_type.j2")
 
 
 @bp.get("/admins")
 @admin_rights_required
-def admins_orders():
+def admins():
     if not "orders" in session:
         return render_template("admins_orders.j2", orders=db_get_admins_orders(db))
     else:
@@ -33,7 +33,7 @@ def admins_orders():
 
 @bp.get("/admins/<orders>")
 @admin_rights_required
-def admins_orders_filtered_get(orders):
+def admins_filtered(orders):
     return render_template("admins_orders.j2", orders=orders)
 
 

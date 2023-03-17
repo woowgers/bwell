@@ -4,7 +4,7 @@
 
   <h1> Manufacturers </h1>
 
-  <form method=POST action={{ url_for('manufacturers.create') }}>
+  <form method=POST action={{ url_for('manufacturer.create') }}>
     <h3> Add manufacturer </h3>
     <table>
       <tr>
@@ -41,7 +41,7 @@
           <td> <p> {{ manufacturer.country.name|capitalize }} </td>
           <td> <p> {{ manufacturer.name }} </td>
           <td>
-            <form method=POST action={{ url_for('manufacturers.delete', manufacturer_id=manufacturer.manufacturer_id) }}>
+            <form method=POST action={{ url_for('manufacturer.delete', manufacturer_id=manufacturer.manufacturer_id) }}>
               <input value=Delete type=submit >
             </form>
           </td>

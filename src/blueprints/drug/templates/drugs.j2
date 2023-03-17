@@ -2,7 +2,7 @@
 {% block title %} Drugs {% endblock %}
 {% block content %}
   <h1> Drugs </h1>
-  <form method=POST action={{ url_for('drugs.post') }}>
+  <form method=POST action={{ url_for('drug.post') }}>
     <h3> Add drug </h3>
     <table>
       <tr>
@@ -50,7 +50,7 @@
         <th></th>
       </tr>
       {% for drug in drugs %}
-        <form method=POST action={{ url_for("drugs.delete_drug", drug_id=drug.drug_id) }}>
+        <form method=POST action={{ url_for("drug.delete", drug_id=drug.drug_id) }}>
           <tr>
             <td> <p> {{ drug.drug_id }} </td>
             <td> <p> {{ drug.drug_group.name }} </td>

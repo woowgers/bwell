@@ -2,7 +2,7 @@
 {% block title %} Vendors {% endblock %}
 {% block content %}
   <h1> Vendors </h1>
-  <form method=POST action="{{ url_for('vendors.add_vendor') }}">
+  <form method=POST action="{{ url_for('vendor.add') }}">
     <h3> Add vendor </h3>
     <table>
       <tr>
@@ -42,10 +42,10 @@
           <tr>
             <td> <p> {{ vendor.vendor_id }} </td>
             <td> <input type=text readonly value={{ vendor.cipher }}> </td>
-            <td> <p> <a href="{{ url_for('vendors.items', vendor_id=vendor.vendor_id) }}">{{ vendor.company_name }} </a> </td>
+            <td> <p> <a href="{{ url_for('vendor.items', vendor_id=vendor.vendor_id) }}">{{ vendor.company_name }} </a> </td>
             <td> <p> {{ vendor.city.name }} </td>
             <td> <p> {{ vendor.conclusion_date }} </td>
-            <form method=POST action="{{ url_for('vendors.terminate_agreement', vendor_id=vendor.vendor_id) }}">
+            <form method=POST action="{{ url_for('vendor.terminate_agreement', vendor_id=vendor.vendor_id) }}">
               {% if not vendor.termination_date %}
                 <td>
                   <input type=date name=termination-date>
@@ -60,7 +60,7 @@
                 </td>
             </form>
             <td>
-              <form method=POST action="{{ url_for('vendors.delete_vendor', vendor_id=vendor.vendor_id) }}">
+              <form method=POST action="{{ url_for('vendor.delete', vendor_id=vendor.vendor_id) }}">
                 <input type=submit value="Delete">
               </form>
             </td>
