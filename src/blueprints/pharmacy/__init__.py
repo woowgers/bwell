@@ -18,7 +18,7 @@ bp = Blueprint(
 
 
 @bp.route("/")
-def read():
+def all():
     if "pharmacy-items" not in session:
         items = db_get_pharmacy_items(db)
     else:
@@ -31,7 +31,7 @@ def read():
 
 @bp.post("/filter")
 def items_filtered():
-    form = DrugFilterForm(request.form.to_dict())
+    form = DrugFilterForm(fields_dict=request.form.to_dict())
     if not form.is_valid:
         return redirect(request.referrer)
 
