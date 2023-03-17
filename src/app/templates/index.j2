@@ -7,9 +7,9 @@
 
         <li> <a href={{ url_for('auth.register') }}> Register </a> <br> </li>
         <li> <a href={{ url_for('auth.login') }}> Log In </a> </li>
-        <li> <a href={{ url_for('pharmacy.read') }}> Inspect pharmacy items </a> </li>
-        <li> <a href={{ url_for('account.read') }}> Inspect your account </a> </li>
-        <li> <a href="{{ url_for('account.accounts') }}"> Inspect other users accounts </a> </li>
+        <li> <a href={{ url_for('pharmacy.all') }}> Inspect pharmacy items </a> </li>
+        <li> <a href={{ url_for('account.my') }}> Inspect your account </a> </li>
+        <li> <a href="{{ url_for('account.all') }}"> Inspect other users accounts </a> </li>
 
         {% if user and user.is_admin  %}
             {# display admin-only features here #}
