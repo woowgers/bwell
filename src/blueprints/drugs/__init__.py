@@ -8,9 +8,9 @@ from forms import DrugRegisterForm
 
 
 bp = Blueprint(
-    "drugs",
+    "drug",
     __name__,
-    url_prefix="/drugs",
+    url_prefix="/drug",
     static_folder="static",
     template_folder="templates",
 )
@@ -38,7 +38,7 @@ def read():
 @bp.post("/")
 @admin_rights_required
 def post():
-    form = DrugRegisterForm(request.form.to_dict())
+    form = DrugRegisterForm(fields_dict=request.form.to_dict())
     if not form.is_valid:
         return redirect(request.referrer)
 
@@ -49,7 +49,7 @@ def post():
         )
         return redirect(request.referrer)
 
-    try:
+    with ModelWebUIContext():
         db_add_drug(
             db,
             manufacturer.manufacturer_id,
@@ -57,8 +57,6 @@ def post():
             form.drug_group_name,
             form.drug_name,
         )
-    except ModelError as error:
-        flash_error(error)
 
     return redirect(request.referrer)
 

@@ -28,9 +28,10 @@ def my():
 @bp.get("/all")
 @admin_rights_required
 def all():
-    users = db_get_users(db)
     def delete_form(user_id: int) -> Form:
         return Form(submit_value="Delete", action=url_for("account.delete_account", user_id=user_id))
+
+    users = db_get_users(db)
     return render_template("accounts.j2", users=users, delete_form=delete_form)
 
 
@@ -44,9 +45,9 @@ def delete(user_id: int):
         return redirect(request.referrer)
 
     try:
-        db_delete_user(db, user_id)
-    except ModelError as error:
-        flash_error(error)
+        with ModelWebUIContext():
+            db_delete_user(db, user_id)
+    except (DBUsageError, ModelError):
         return redirect(request.referrer)
 
     return redirect(url_for("account.all"), code=307)
@@ -62,9 +63,9 @@ def delete_my(user_id: int):
         )
 
     try:
-        db_delete_user(db, user_id)
-    except ModelError as error:
-        flash_error(error)
+        with ModelWebUIContext():
+            db_delete_user(db, user_id)
+    except (DBUsageError, ModelError):
         return redirect(request.referrer)
 
     return redirect(url_for("auth.do_logout"), code=307)
