@@ -76,12 +76,12 @@ def db_get_pharmacy_items_filtered(
     )
 
 
-def db_get_pharmacy_item_amount(db: DBCursor, item_id, price) -> int:
+def db_get_pharmacy_item_amount(db: DBCursor, item_id) -> int:
     SQL_QUERY = """
         SELECT amount FROM pharmacy_has_item
-        WHERE item_id = %s AND price = %s
+        WHERE item_id = %s
     """
-    amount_tuples = db_execute(db, SQL_QUERY, (item_id, price))
+    amount_tuples = db_execute(db, SQL_QUERY, (item_id))
     if not amount_tuples:
         return 0
     return amount_tuples[0][0]

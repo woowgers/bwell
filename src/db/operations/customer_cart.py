@@ -2,21 +2,21 @@ from db import *
 
 
 def db_push_customer_cart_item_amount(
-    db: DBCursor, user_id, drug_id, price, amount
+    db: DBCursor, user_id, item_id, amount
 ) -> None:
     SQL_QUERY = """
-        INSERT INTO customer_cart_has_drug (user_id, drug_id, price, amount)
+        INSERT INTO customer_cart_has_item (user_id, item_id, price, amount)
         VALUES (%s, %s, %s, %s)
-        ON CONFLICT (user_id, drug_id, price)
+        ON CONFLICT (user_id, item_id)
         ON DUPLICATE KEY UPDATE amount = amount + %s
     """
 
     if amount <= 0:
         raise ModelError("Amount must be positive.")
 
-    amount_pharmacy_has = db_get_pharmacy_item_amount(db, drug_id, price)
+    amount_pharmacy_has = db_get_pharmacy_item_amount(db, item_id)
     amount_in_cart_already = db_get_customer_cart_item_amount(
-        db, user_id, drug_id, price
+        db, user_id, item_id
     )
     total_amount_wanted = amount_in_cart_already + amount
 
@@ -27,21 +27,21 @@ def db_push_customer_cart_item_amount(
     elif total_amount_wanted > amount_pharmacy_has:
         raise ModelError(f"Vendor does not have enough of given drug.")
 
-    db_execute(db, SQL_QUERY, (user_id, drug_id, price, amount, amount))
+    db_execute(db, SQL_QUERY, (user_id, item_id, amount, amount))
 
 
-def db_delete_customer_cart_item(db: DBCursor, user_id, drug_id, price) -> None:
+def db_delete_customer_cart_item(db: DBCursor, user_id, item_id) -> None:
     SQL_QUERY = """
-        DELETE FROM customer_cart_has_drug
-        WHERE user_id = %s AND drug_id = %s AND price = %s
+        DELETE FROM customer_cart_has_item
+        WHERE user_id = %s AND item_id %s
     """
-    db_execute(db, SQL_QUERY, (user_id, drug_id, price))
+    db_execute(db, SQL_QUERY, (user_id, item_id))
 
 
-def db_get_customer_cart_items(db: DBCursor, user_id) -> tuple[tuple[Drug, float, int]]:
+def db_get_customer_cart_items(db: DBCursor, user_id) -> tuple[tuple[Item, int]]:
     SQL_QUERY = """
         SELECT
-            customer_cart_has_drug.drug_id,
+            customer_cart_has_item.item_id,
             drug_group.drug_group_id,
             drug_group.name,
             drug.cipher,
@@ -50,32 +50,32 @@ def db_get_customer_cart_items(db: DBCursor, user_id) -> tuple[tuple[Drug, float
             country.country_id,
             country.name,
             manufacturer.name,
-            customer_cart_has_drug.price,
-            customer_cart_has_drug.amount
+            customer_cart_has_item.price,
+            customer_cart_has_item.amount
         FROM
-            customer_cart_has_drug
+            customer_cart_has_item
+            JOIN pharmacy_item USING (item_id)
             JOIN drug USING (drug_id)
             JOIN drug_group USING (drug_group_id)
             JOIN manufacturer USING (manufacturer_id)
             JOIN country USING (country_id)
-        WHERE customer_cart_has_drug.user_id = %s
+        WHERE customer_cart_has_item.user_id = %s
     """
     return tuple(
         (
-            Drug.from_primitives(*item_tuple[:9]),
-            float(item_tuple[9]),
+            Item.from_primitives(*item_tuple[:9]),
             int(item_tuple[10]),
         )
         for item_tuple in db_execute(db, SQL_QUERY, (user_id,))
     )
 
 
-def db_get_customer_cart_item_amount(db: DBCursor, user_id, drug_id, price) -> int:
+def db_get_customer_cart_item_amount(db: DBCursor, user_id, item_id) -> int:
     SQL_QUERY = """
-        SELECT amount FROM customer_cart_has_drug
-        WHERE user_id = %s AND drug_id = %s AND price = %s
+        SELECT amount FROM customer_cart_has_item
+        WHERE user_id = %s AND item_id = %s
     """
-    amount_tuples = db_execute(db, SQL_QUERY, (user_id, drug_id, price))
+    amount_tuples = db_execute(db, SQL_QUERY, (user_id, item_id))
     if not amount_tuples:
         return 0
     return amount_tuples[0][0]
@@ -198,25 +198,25 @@ def db_get_customer_order(db: DBCursor, order_id) -> Order:
 
 
 def db_update_customer_cart_item_amount(
-    db: DBCursor, user_id, drug_id, price, amount
+    db: DBCursor, user_id, item_id, amount
 ) -> None:
     SQL_QUERY = """
-        UPDATE customer_cart_has_drug
+        UPDATE customer_cart_has_item
         SET amount = %s
-        WHERE user_id = %s AND drug_id = %s AND price = %s
+        WHERE user_id = %s AND item_id = %s
     """
 
     if amount < 0:
         raise ModelError("Amount must not be negative.")
 
     if amount == 0:
-        return db_delete_customer_cart_item(db, user_id, drug_id, price)
+        return db_delete_customer_cart_item(db, user_id, item_id)
 
-    amount_pharmacy_has = db_get_pharmacy_item_amount(db, drug_id, price)
+    amount_pharmacy_has = db_get_pharmacy_item_amount(db, item_id)
     if amount > amount_pharmacy_has:
         raise ModelError(f"Pharmacy does not have enough of given drug.")
 
-    db_execute(db, SQL_QUERY, (amount, user_id, drug_id, price))
+    db_execute(db, SQL_QUERY, (amount, user_id, item_id))
 
 
 def db_create_customer_order(
@@ -232,16 +232,16 @@ def db_create_customer_order(
 
 
 def db_move_drug_from_customer_cart_to_order(
-    db: DBCursor, user_id, order_id, drug_id, price, amount
+    db: DBCursor, user_id, order_id, item_id, amount
 ) -> None:
     try:
-        amount_pharmacy_has = db_get_pharmacy_item_amount(db, drug_id, price)
+        amount_pharmacy_has = db_get_pharmacy_item_amount(db, item_id)
     except ModelError:
-        db_delete_customer_cart_item(db, user_id, drug_id, price)
+        db_delete_customer_cart_item(db, user_id, item_id)
         raise
 
     if amount > amount_pharmacy_has:
-        drug = db_get_drug(db, drug_id)
+        drug = db_get_drug(db, item_id)
         raise ModelError(
             f"Pharmacy does not have enough of drug with cipher={drug.cipher}."
         )
@@ -249,7 +249,7 @@ def db_move_drug_from_customer_cart_to_order(
     db_callproc(
         db,
         "move_drug_from_customer_cart_to_order",
-        (user_id, order_id, drug_id, price, amount),
+        (user_id, order_id, item_id, amount),
     )
 
 
@@ -262,9 +262,9 @@ def db_order_customer_cart(
 
     order = db_create_customer_order(db, user_id, create_date, expect_receive_date)
 
-    for drug, price, amount in cart_items:
+    for item, amount in cart_items:
         db_move_drug_from_customer_cart_to_order(
-            db, user_id, order.order_id, drug.drug_id, price, amount
+            db, user_id, order.order_id, drug.drug_id, amount
         )
 
 
