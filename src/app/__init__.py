@@ -15,7 +15,7 @@ def app_register_blueprints(app: Flask) -> None:
     from blueprints.manufacturer import bp as manufacturer_bp
     from blueprints.order import bp as order_bp
     from blueprints.pharmacy import bp as pharmacy_bp
-    from blueprints.vendors import bp as vendors_bp
+    from blueprints.vendor import bp as vendor_bp
 
     app.register_blueprint(account_bp)
     app.register_blueprint(auth_bp)
@@ -24,7 +24,7 @@ def app_register_blueprints(app: Flask) -> None:
     app.register_blueprint(manufacturer_bp)
     app.register_blueprint(order_bp)
     app.register_blueprint(pharmacy_bp)
-    app.register_blueprint(vendors_bp)
+    app.register_blueprint(vendor_bp)
 
 
 def create_app() -> Flask:
