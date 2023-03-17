@@ -19,6 +19,7 @@ DBCursor = psycopg2._psycopg.cursor
 
 
 ModelError = DBIntegrityError
+DBUsageError = DBError
 
 
 class DefaultModelError(ModelError):
@@ -50,12 +51,12 @@ def db_execute(
     try:
         db.execute(statement, params, **kwargs)
     except (
-            DBOperationalError,
-            DBProgrammingError,
-            DBInterfaceError,
-            DBInternalError,
-            ) as error:
-        flash(f'Database usage error: "{error}".', category="error")
+        DBOperationalError,
+        DBProgrammingError,
+        DBInterfaceError,
+        DBInternalError,
+    ) as error:
+        raise DBUsageError(error)
 
     try:
         return db.fetchall()
@@ -74,7 +75,7 @@ def db_executemany(
         DBInterfaceError,
         DBInternalError,
     ) as error:
-        flash(f'Database usage error: "{error}".', category="error")
+        raise DBUsageError(error)
 
 
 def db_callproc(
@@ -92,9 +93,19 @@ def db_callproc(
         DBInterfaceError,
         DBInternalError,
     ) as error:
-        flash(f'Database usage error: "{error}".', category="error")
+        raise DBUsageError(error)
 
     return ()
+
+
+class ModelWebUIContext:
+    def __enter__(self) -> None:
+        pass
+
+    def __exit__(self, exc_type, exc_val, _) -> bool | None:
+        if exc_type in (ModelError, DBUsageError):
+            flash(str(exc_val), category="error")
+            return True
 
 
 from .operations.manufacturer import *

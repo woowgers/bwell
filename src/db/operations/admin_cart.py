@@ -177,7 +177,7 @@ def db_get_admins_orders_filtered(
     receive_date_max=None,
     cost_min=None,
     cost_max=None,
-    is_received=None
+    is_received=None,
 ):
     SQL_QUERY = """
         SELECT
@@ -216,8 +216,7 @@ def db_get_admins_orders_filtered(
     print(SQL_QUERY)
 
     return tuple(
-        Order.from_primitives(*order_tuple)
-        for order_tuple in db_execute(db, SQL_QUERY)
+        Order.from_primitives(*order_tuple) for order_tuple in db_execute(db, SQL_QUERY)
     )
 
 

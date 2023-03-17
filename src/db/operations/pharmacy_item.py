@@ -4,7 +4,7 @@ from db import *
 def db_get_pharmacy_items(db: DBCursor) -> tuple[tuple[Drug, float, int]]:
     SQL_QUERY = """
         SELECT
-            pharmacy_has_drug.drug_id,
+            pharmacy_has_item.item_id,
             drug_group.drug_group_id,
             drug_group.name,
             drug.cipher,
@@ -13,10 +13,11 @@ def db_get_pharmacy_items(db: DBCursor) -> tuple[tuple[Drug, float, int]]:
             country.country_id,
             country.name,
             manufacturer.name,
-            pharmacy_has_drug.price,
-            pharmacy_has_drug.amount
+            pharmacy_item.price,
+            pharmacy_has_item.amount
         FROM
-            pharmacy_has_drug
+            pharmacy_has_item
+            JOIN pharmacy_item USING (item_id)
             JOIN drug USING (drug_id)
             JOIN drug_group USING (drug_group_id)
             JOIN manufacturer USING (manufacturer_id)
@@ -37,7 +38,7 @@ def db_get_pharmacy_items_filtered(
 ) -> tuple[tuple[Drug, float, int]]:
     SQL_QUERY = """
         SELECT
-            pharmacy_has_drug.drug_id,
+            pharmacy_has_item.item_id,
             drug_group.drug_group_id,
             drug_group.name,
             drug.cipher,
@@ -46,23 +47,24 @@ def db_get_pharmacy_items_filtered(
             country.country_id,
             country.name,
             manufacturer.name,
-            pharmacy_has_drug.price,
-            pharmacy_has_drug.amount
+            pharmacy_item.price,
+            pharmacy_has_item.amount
         FROM
-            pharmacy_has_drug
+            pharmacy_has_item
+            JOIN pharmacy_item USING (item_id)
             JOIN drug USING (drug_id)
             JOIN drug_group USING (drug_group_id)
             JOIN manufacturer USING (manufacturer_id)
             JOIN country USING (country_id)
-        WHERE pharmacy_has_drug.drug_id IS NOT NULL
+        WHERE pharmacy_has_item.item_id IS NOT NULL
     """
 
     if drug_group_name:
         SQL_QUERY += f"\nAND drug_group.name = '{drug_group_name}'"
     if price_min:
-        SQL_QUERY += f"\nAND pharmacy_has_drug.price >= {price_min}"
+        SQL_QUERY += f"\nAND pharmacy_item.price >= {price_min}"
     if price_max:
-        SQL_QUERY += f"\nAND pharmacy_has_drug.price <= {price_max}"
+        SQL_QUERY += f"\nAND pharmacy_item.price <= {price_max}"
 
     return tuple(
         (
@@ -72,14 +74,14 @@ def db_get_pharmacy_items_filtered(
         )
         for item_tuple in db_execute(db, SQL_QUERY)
     )
-    
 
-def db_get_pharmacy_item_amount(db: DBCursor, drug_id, price) -> int:
+
+def db_get_pharmacy_item_amount(db: DBCursor, item_id, price) -> int:
     SQL_QUERY = """
-        SELECT amount FROM pharmacy_has_drug
-        WHERE drug_id = %s AND price = %s
+        SELECT amount FROM pharmacy_has_item
+        WHERE item_id = %s AND price = %s
     """
-    amount_tuples = db_execute(db, SQL_QUERY, (drug_id, price))
+    amount_tuples = db_execute(db, SQL_QUERY, (item_id, price))
     if not amount_tuples:
         return 0
     return amount_tuples[0][0]
