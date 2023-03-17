@@ -29,7 +29,7 @@ def my():
 @admin_rights_required
 def all():
     def delete_form(user_id: int) -> Form:
-        return Form(submit_value="Delete", action=url_for("account.delete_account", user_id=user_id))
+        return Form(submit_value="Delete", action=url_for("account.delete", user_id=user_id))
 
     users = db_get_users(db)
     return render_template("accounts.j2", users=users, delete_form=delete_form)
