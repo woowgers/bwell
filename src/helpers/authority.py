@@ -41,3 +41,4 @@ def cashier_rights_required(handler: ViewHandler) -> ViewHandler:
         return handler(*args, **kwargs)
 
     return wrapper
+
