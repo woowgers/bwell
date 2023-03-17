@@ -26,12 +26,8 @@
         <td> <input type=text readonly value="{{ user.pw_hash }}"> </td>
       </tr>
     </table>
-    <form method="POST" action="{{ url_for("account.logout") }}">
-        <input type=submit value="Log out" />
-    </form>
-    <form method="POST" action="{{ url_for("account.delete_my_account", user_id=user.user_id) }}">
-        <input type=submit value="Delete my account" />
-    </form>
+    {{ logout_form.html }}
+    {{ delete_form.html }}
   {% else %}
     <h1> Could not find specified user page </h1>
   {% endif %}

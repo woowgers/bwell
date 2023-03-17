@@ -13,17 +13,15 @@
         <th> <p> Password hash </th>
         <th> </th>
       </tr>
-        {% for _user in users %}
+        {% for user_ in users %}
           <tr>
-            <td> <p> {{ _user.user_id }} </td>
-            <td> <p> {{ _user.type }} </td>
-            <td> <p> {{ _user.name }} </td>
-            <td> <p> {{ _user.email }} </td>
-            <td> <input type=text readonly value={{ _user.pw_hash }}> </td>
+            <td> <p> {{ user_.user_id }} </td>
+            <td> <p> {{ user_.type }} </td>
+            <td> <p> {{ user_.name }} </td>
+            <td> <p> {{ user_.email }} </td>
+            <td> <input type=text readonly value={{ user_.pw_hash }}> </td>
             <td>
-                <form method=POST action={{ url_for('account.delete_account', user_id=_user.user_id) }}>
-                  <input type=submit value="Delete user">
-                </form>
+              {{ delete_form(user_.user_id).html }}
             </td>
           </tr>
         {% endfor %}

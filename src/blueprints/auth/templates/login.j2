@@ -5,23 +5,22 @@
 
   <div></div>
 
-  <form method="POST" action="{{ url_for('auth.login') }}">
+  {% with inputs = login_form.html_inputs, labels = login_form.html_labels, submit = login_form.html_submit %}
     <table>
-      <tr>
-        <td> <label for=email> Email </label> </td>
-        <td> <input name=email type=email> </td>
-      </tr>
-
-      <tr>
-        <td> <label for=password> Password </label> </td>
-        <td> <input name=password type="password"> </td>
-      </tr>
+      {% for i in range(inputs|length) %}
+        <tr>
+          <td> <p> {{ labels[i] }} </td>
+          <td> {{ inputs[i] }} </td>
+        </tr>
+      {% endfor %}
       <tr>
         <td></td>
-        <td> <input type=submit value="Log In"> </td>
+        <td> {{ submit }} </td>
       </tr>
     </table>
-  </form>
+  {% endwith %}
+
+  {{ login_form.html_form }}
 
   <h5> <a href="{{ url_for('auth.register') }}"> Don't have an account? </a> </h5>
 
