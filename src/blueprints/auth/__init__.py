@@ -6,6 +6,7 @@ from db.models import *
 from proxies import db, user
 from helpers.flashes import *
 
+from helpers.authority import login_required
 from forms import LoginForm, RegisterForm
 
 
@@ -19,53 +20,61 @@ bp = Blueprint(
 
 
 @bp.route("/")
-def read():
+def root():
     return redirect(url_for("auth.login"))
 
 
 @bp.route("/register")
 def register():
-    return render_template("register.j2")
+    form = RegisterForm(action=url_for("auth.do_register"))
+    return render_template("register.j2", register_form=form)
 
 
 @bp.get("/login")
 def login():
-    return render_template("login.j2")
+    form = LoginForm(action=url_for("auth.do_login"), submit_value="Log In")
+    return render_template("login.j2", login_form=form)
+
+
+@bp.post("/logout")
+@login_required
+def do_logout():
+    session.clear()
+    return redirect(url_for("root"))
 
 
 @bp.post("/register")
 def do_register():
-    form = RegisterForm(request.form.to_dict())
-
+    form = RegisterForm(fields_dict=request.form.to_dict())
     if not form.is_valid:
         return redirect(request.url)
 
     pw_hash = generate_password_hash(form.password)
-
     try:
-        db_add_user(db, form.user_type, form.email, form.username, pw_hash)
-    except ModelError as error:
-        flash_error(f"User with given email already exists.")
-        flash_error(f"Unexpected model error: {error}.")
+        with ModelWebUIContext():
+            db_add_user(db, form.user_type, form.email, form.username, pw_hash)
+    except (ModelError, DBUsageError):
         return redirect(request.referrer)
 
     flash_success("You have successfully registered a new user")
+
     if not user:
         return redirect(url_for("auth.login"))
-    else:
-        return redirect(url_for("auth.register"))
+
+    return redirect(url_for("auth.register"))
 
 
 @bp.post("/login")
 def do_login():
-    form = LoginForm(request.form.to_dict())
+    user = None
+    form = LoginForm(fields_dict=request.form.to_dict())
     if not form.is_valid:
         return redirect(request.url)
 
     try:
-        user = db_get_user_by_email(db, form.email)
-    except ModelError as error:
-        flash_error(error)
+        with ModelWebUIContext():
+            user = db_get_user_by_email(db, form.email)
+    except (ModelError, DBUsageError):
         return redirect(request.url)
 
     if not check_password_hash(user.pw_hash, form.password):
@@ -73,4 +82,5 @@ def do_login():
         return redirect(request.url)
 
     session["user"] = user
-    return redirect(url_for("account.read"))
+    return redirect(url_for("account.my"))
+

@@ -19,15 +19,13 @@ bp = Blueprint(
 
 @bp.route("/")
 def read():
-    if 'pharmacy-items' not in session:
+    if "pharmacy-items" not in session:
         items = db_get_pharmacy_items(db)
     else:
-        items = session['pharmacy-items']
+        items = session["pharmacy-items"]
 
     return render_template(
-        "pharmacy.j2",
-        items=items,
-        drug_groups=db_get_drug_groups(db)
+        "pharmacy.j2", items=items, drug_groups=db_get_drug_groups(db)
     )
 
 
@@ -37,5 +35,5 @@ def items_filtered():
     if not form.is_valid:
         return redirect(request.referrer)
 
-    session['pharmacy-items'] = db_get_pharmacy_items_filtered(db, **form.fields)
+    session["pharmacy-items"] = db_get_pharmacy_items_filtered(db, **form.fields)
     return redirect(request.referrer)

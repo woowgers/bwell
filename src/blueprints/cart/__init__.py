@@ -4,7 +4,12 @@ from helpers.authority import *
 from helpers.flashes import *
 from proxies import *
 
-from forms import AddItemToCartForm, AddItemToCustomerCartForm, ChangeItemAmountForm, ChangeCustomerCartItemAmountForm
+from forms import (
+    AddItemToCartForm,
+    AddItemToCustomerCartForm,
+    ChangeItemAmountForm,
+    ChangeCustomerCartItemAmountForm,
+)
 
 
 bp = Blueprint(
@@ -96,8 +101,7 @@ def admin_cart_change_item_amount():
 @login_required
 def customer():
     return render_template(
-        "customer_cart.j2",
-        items=db_get_customer_cart_items(db, user.user_id)
+        "customer_cart.j2", items=db_get_customer_cart_items(db, user.user_id)
     )
 
 
@@ -109,7 +113,9 @@ def add_to_customer_cart():
         return redirect(request.referrer)
 
     try:
-        db_push_customer_cart_item_amount(db, user.user_id, form.drug_id, form.price, form.amount)
+        db_push_customer_cart_item_amount(
+            db, user.user_id, form.drug_id, form.price, form.amount
+        )
     except ModelError as error:
         flash_error(error)
 
@@ -123,7 +129,9 @@ def customer_cart_change_item_amount():
         return redirect(request.referrer)
 
     try:
-        db_update_customer_cart_item_amount(db, user.user_id, form.drug_id, form.price, form.amount)
+        db_update_customer_cart_item_amount(
+            db, user.user_id, form.drug_id, form.price, form.amount
+        )
     except ModelError as error:
         flash_error(error)
 
@@ -137,7 +145,9 @@ def order_customer_cart(user_id: int):
         abort(503)
 
     try:
-        db_order_customer_cart(db, user.user_id, datetime.date.today(), datetime.date.today())
+        db_order_customer_cart(
+            db, user.user_id, datetime.date.today(), datetime.date.today()
+        )
     except ModelError as error:
         flash_error(error)
 

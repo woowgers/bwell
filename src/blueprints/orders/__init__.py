@@ -25,10 +25,10 @@ def read():
 @bp.get("/admins")
 @admin_rights_required
 def admins_orders():
-    if not 'orders' in session:
+    if not "orders" in session:
         return render_template("admins_orders.j2", orders=db_get_admins_orders(db))
     else:
-        return render_template("admins_orders.j2", orders=session['orders'])
+        return render_template("admins_orders.j2", orders=session["orders"])
 
 
 @bp.get("/admins/<orders>")
@@ -71,7 +71,7 @@ def admins_orders_filtered():
     if not form.is_valid:
         return redirect(request.referrer)
 
-    session['orders'] = db_get_admins_orders_filtered(
+    session["orders"] = db_get_admins_orders_filtered(
         db,
         create_date_min=form.create_date_min,
         create_date_max=form.create_date_max,
@@ -79,7 +79,7 @@ def admins_orders_filtered():
         receive_date_max=form.receive_date_max,
         cost_min=form.cost_min,
         cost_max=form.cost_max,
-        is_received=form.is_received
+        is_received=form.is_received,
     )
     return redirect(request.referrer)
 
@@ -87,11 +87,13 @@ def admins_orders_filtered():
 @bp.get("/customers")
 @cashier_rights_required
 def customers_orders():
-    if 'customers_orders' not in session:
-        return render_template("customers_orders.j2", orders=db_get_customers_orders(db))
+    if "customers_orders" not in session:
+        return render_template(
+            "customers_orders.j2", orders=db_get_customers_orders(db)
+        )
     else:
-        print(session['customers_orders'])
-        orders = tuple(Order(**order) for order in session['customers_orders'])
+        print(session["customers_orders"])
+        orders = tuple(Order(**order) for order in session["customers_orders"])
         return render_template("customers_orders.j2", orders=orders)
 
 
@@ -102,7 +104,7 @@ def customers_orders_filtered():
     if not form.is_valid:
         return redirect(request.referrer)
 
-    session['customers_orders'] = db_get_customers_orders_filtered(
+    session["customers_orders"] = db_get_customers_orders_filtered(
         db,
         create_date_min=form.create_date_min,
         create_date_max=form.create_date_max,
@@ -110,7 +112,7 @@ def customers_orders_filtered():
         receive_date_max=form.receive_date_max,
         cost_min=form.cost_min,
         cost_max=form.cost_max,
-        is_received=form.is_received
+        is_received=form.is_received,
     )
     return redirect(request.referrer)
 
@@ -129,7 +131,7 @@ def customer_order(order_id: int):
     return render_template(
         "customer_order.j2",
         order=db_get_customer_order(db, order_id),
-        items=db_get_customer_order_items(db, order_id)
+        items=db_get_customer_order_items(db, order_id),
     )
 
 
