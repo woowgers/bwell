@@ -6,7 +6,7 @@
   <h2> Storefront </h2>
 
   <h3> Add item to vendor's storefront </h3>
-  <form method=POST action="{{ url_for('vendors.add_storefront_item', vendor_id=vendor.vendor_id) }}">
+  <form method=POST action="{{ url_for('vendor.add_storefront_item', vendor_id=vendor.vendor_id) }}">
     <table>
       <th> <p> Item ID </th>
       <th> <p> Amount </th>
@@ -58,7 +58,7 @@
             action="{{ url_for('cart.add_to_admin_cart', item_id=item.item_id) }}"
             method=POST > </form>
       <form id="{{ 'delete-vendor-item-form-' + item.item_id|string }}"
-            action="{{ url_for('vendors.delete_storefront_item', vendor_id=vendor.vendor_id, item_id=item.item_id) }}"
+            action="{{ url_for('vendor.delete_storefront_item', vendor_id=vendor.vendor_id, item_id=item.item_id) }}"
             method=POST > </form>
     {% endfor %}
   {% else %}
@@ -70,7 +70,7 @@
 
   <h3> Add item </h3>
 
-  <form method=POST action={{ url_for('vendors.add_item', vendor_id=vendor.vendor_id) }}>
+  <form method=POST action={{ url_for('vendor.add_item', vendor_id=vendor.vendor_id) }}>
     <table>
       <th> Drug ID </th>
       <th> Price </th>
@@ -109,7 +109,7 @@
           <td> <p> {{ item.drug.manufacturer.name }} </td>
           <td> <p> {{ item.price }} </td>
           <td>
-            <form method=POST action="{{ url_for('vendors.delete_item', vendor_id=vendor.vendor_id, item_id=item.item_id) }}">
+            <form method=POST action="{{ url_for('vendor.delete_item', vendor_id=vendor.vendor_id, item_id=item.item_id) }}">
               <input type=submit value=Delete>
             </form>
           </td>

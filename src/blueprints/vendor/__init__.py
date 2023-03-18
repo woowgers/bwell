@@ -30,7 +30,7 @@ def all():
 def add():
     form = VendorRegisterForm(fields_dict=request.form.to_dict())
     if not form.is_valid:
-        return redirect(url_for("vendors.read"))
+        return redirect(url_for("vendor.read"))
 
     with ModelWebUIContext():
         db_add_vendor(
@@ -58,7 +58,7 @@ def delete(vendor_id: int):
 def terminate_agreement(vendor_id: int):
     form = VendorAgreementTerminationForm(fields_dict=request.form.to_dict())
     if not form.is_valid:
-        return redirect(url_for("vendors.read"))
+        return redirect(url_for("vendor.read"))
 
     with ModelWebUIContext():
         db_vendor_terminate_agreement(db, vendor_id, form.termination_date)
@@ -89,7 +89,9 @@ def items(vendor_id: int):
 def add_item(vendor_id: int):
     form = VendorAddItemForm(fields_dict=request.form.to_dict())
     if not form.is_valid:
-        return redirect(url_for("vendors.items", vendor_id=vendor_id))
+        return redirect(url_for("vendor.items", vendor_id=vendor_id))
+    else:
+        flash_success("Item has been successfully added!")
 
     with ModelWebUIContext():
         db_add_vendor_item(db, vendor_id, form.drug_id, form.price)
