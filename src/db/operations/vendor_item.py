@@ -105,9 +105,10 @@ def db_add_vendor_storefront_item(db: DBCursor, vendor_id, item_id, amount) -> N
     SQL_QUERY = """
         INSERT INTO vendor_has_item (vendor_id, item_id, amount)
         VALUES (%s, %s, %s)
-        ON DUPLICATE KEY UPDATE amount = amount + %s
+        ON CONFLICT (vendor_id, item_id)
+        DO UPDATE SET vendor_has_item.amount = vendor_has_item.amount + %s
     """
-    db_execute(db, SQL_QUERY, (vendor_id, item_id, amount, int(amount)))
+    db_execute(db, SQL_QUERY, (vendor_id, item_id, amount, amount))
 
 
 def db_delete_vendor_storefront_item(db: DBCursor, vendor_id, item_id) -> None:

@@ -8,7 +8,7 @@ def db_push_customer_cart_item_amount(
         INSERT INTO customer_cart_has_item (user_id, item_id, price, amount)
         VALUES (%s, %s, %s, %s)
         ON CONFLICT (user_id, item_id)
-        ON DUPLICATE KEY UPDATE amount = amount + %s
+        DO UPDATE SET amount = amount + %s
     """
 
     if amount <= 0:

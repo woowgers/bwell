@@ -58,7 +58,8 @@ def db_push_admin_cart_item_amount(db: DBCursor, user_id, item_id, amount) -> No
     SQL_QUERY = """
         INSERT INTO admin_cart_has_item (user_id, item_id, amount)
         VALUES (%s, %s, %s)
-        ON DUPLICATE KEY UPDATE amount = amount + %s
+        ON CONFLICT (user_id, item_id)
+        DO UPDATE SET amount = amount + %s
     """
 
     if amount <= 0:
