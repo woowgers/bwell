@@ -136,3 +136,6 @@ create table if not exists admin_cart_has_item (
     amount int not null,
     UNIQUE (user_id, item_id)
 );
+
+
+select * from "user";
