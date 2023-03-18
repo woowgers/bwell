@@ -215,7 +215,7 @@ class BooleanField(Field):
 
     def is_valid(self, value):
         if value is None:
-            return True
+            return not self.required
         if not isinstance(value, str) and not isinstance(value, bool):
             return False
         try:
@@ -245,7 +245,7 @@ class StringField(Field):
 
     def is_valid(self, value) -> bool:
         if value is None:
-            return True
+            return not self.required
         return isinstance(value, str) and self.minlen <= len(value) <= self.maxlen
 
     @property
@@ -271,7 +271,7 @@ class IntegerField(Field):
 
     def is_valid(self, value) -> bool:
         if value is None:
-            return True
+            return not self.required
         try:
             return self.minval <= int(value) <= self.maxval
         except (TypeError, ValueError):
@@ -307,7 +307,7 @@ class FloatField(Field):
 
     def is_valid(self, value) -> bool:
         if value is None:
-            return True
+            return not self.required
         try:
             return self.minval <= float(value) <= self.maxval
         except (TypeError, ValueError):
@@ -330,6 +330,8 @@ class EmailField(Field):
         super().__init__(*args, **kwargs, input_type="email")
 
     def is_valid(self, value) -> bool:
+        if value is None:
+            return not self.required
         return email_is_valid(value)
 
     @property
@@ -342,6 +344,8 @@ class PasswordField(Field):
         super().__init__(*args, **kwargs, input_type="password")
 
     def is_valid(self, value) -> bool:
+        if value is None:
+            return not self.required
         return password_is_valid(value)
 
     @property
@@ -351,6 +355,8 @@ class PasswordField(Field):
 
 class UsernameField(StringField):
     def is_valid(self, value) -> bool:
+        if value is None:
+            return not self.required
         return username_is_valid(value)
 
     @property
@@ -360,6 +366,8 @@ class UsernameField(StringField):
 
 class UserTypeField(StringField):
     def is_valid(self, value) -> bool:
+        if value is None:
+            return not self.required
         return user_type_is_valid(value)
 
     @property
@@ -390,6 +398,8 @@ class DateField(Field):
 
 class CipherField(StringField):
     def is_valid(self, value):
+        if value is None:
+            return not self.required
         return isinstance(value, str) and len(value) >= 6
 
     def __set__(self, obj: Form, value: t.Any):
