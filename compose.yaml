@@ -12,8 +12,8 @@ services:
       - ./bin:/app/bin
     depends_on:
       - postgres
-    restart: "no"
-    command: /app/bin/run-app.sh
+    restart: no
+    command: /bin/sh /app/bin/run-app.sh
 
   postgres:
     image: postgres:14
@@ -23,7 +23,7 @@ services:
       - .env
     ports:
       - "5432:${POSTGRES_PORT}"
-    restart: "no"
+    restart: no
 
 volumes:
     db_data: {}
