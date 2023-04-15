@@ -1,13 +1,13 @@
+import typing as t
+from functools import wraps
+
 from flask import redirect, url_for
 
 from proxies import user
+
 from .flashes import flash_error
 
-from functools import wraps
-import typing as t
-
-
-ViewHandler = t.Callable
+ViewHandler: t.TypeAlias = t.Callable
 
 
 def login_required(handler: ViewHandler) -> ViewHandler:
@@ -41,4 +41,3 @@ def cashier_rights_required(handler: ViewHandler) -> ViewHandler:
         return handler(*args, **kwargs)
 
     return wrapper
-
