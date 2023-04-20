@@ -1,5 +1,5 @@
 from flask import render_template, redirect, request, session
-from forms import OrderFilterForm
+from forms.forms import OrderFilterForm
 
 from helpers.authority import cashier_rights_required, admin_rights_required
 from helpers.flashes import *

@@ -3,7 +3,7 @@ from flask import render_template, request, url_for, redirect
 from proxies import db
 from helpers.authority import admin_rights_required
 from helpers.flashes import *
-from forms import *
+from forms.forms import *
 from db import *
 from db.models import *
 

@@ -7,7 +7,7 @@ from proxies import db, user
 from helpers.flashes import *
 
 from helpers.authority import login_required
-from forms import LoginForm, RegisterForm
+from forms.forms import LoginForm, RegisterForm
 
 
 bp = Blueprint(

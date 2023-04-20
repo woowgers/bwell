@@ -1,7 +1,7 @@
 from flask import redirect, render_template, request
 
 from db import *
-from forms import ManufacturerAddForm
+from forms.forms import ManufacturerAddForm
 from helpers.authority import admin_rights_required
 from proxies import db
 

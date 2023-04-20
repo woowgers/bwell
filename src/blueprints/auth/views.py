@@ -1,7 +1,7 @@
 from flask import abort, redirect, render_template, request, url_for
 
 from db import *
-from forms import Form
+from forms.forms import Form
 from helpers.authority import *
 from helpers.flashes import *
 from proxies import db, user

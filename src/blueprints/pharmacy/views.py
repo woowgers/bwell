@@ -5,7 +5,7 @@ from helpers.authority import *
 from db import *
 from proxies import db
 
-from forms import DrugFilterForm
+from forms.forms import DrugFilterForm
 
 from . import bp
 

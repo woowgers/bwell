@@ -1,7 +1,7 @@
 from flask import redirect, render_template, request, url_for
 
 from db import *
-from forms import DrugRegisterForm
+from forms.forms import DrugRegisterForm
 from helpers.authority import *
 from helpers.flashes import *
 from proxies import db

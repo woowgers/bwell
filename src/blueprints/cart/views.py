@@ -4,7 +4,7 @@ from helpers.authority import *
 from helpers.flashes import *
 from proxies import *
 
-from forms import (
+from forms.forms import (
     AddItemToCartForm,
     AddItemToCustomerCartForm,
     ChangeItemAmountForm,
