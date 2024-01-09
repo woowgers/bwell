@@ -1,7 +1,7 @@
-from dataclasses import dataclass
 import datetime
-from enum import Enum
 import typing as t
+from dataclasses import dataclass
+from enum import Enum
 
 
 class UserType(Enum):
@@ -51,9 +51,17 @@ class Manufacturer:
 
     @classmethod
     def from_primitives(
-        cls, manufacturer_id: int, country_id: int, country_name: str, name: str
-    ) -> "Manufacturer":
-        return cls(manufacturer_id, Country(country_id, country_name), name)
+        cls,
+        manufacturer_id: int,
+        country_id: int,
+        country_name: str,
+        name: str,
+    ) -> t.Self:
+        return cls(
+            manufacturer_id,
+            Country(country_id, country_name),
+            name,
+        )
 
 
 @dataclass
@@ -63,7 +71,7 @@ class Vendor:
     company_name: str
     city: City
     conclusion_date: datetime.date
-    termination_date: t.Optional[datetime.date]
+    termination_date: datetime.date | None
 
     @classmethod
     def from_primitives(
@@ -74,8 +82,8 @@ class Vendor:
         city_id: int,
         city_name: str,
         conclusion_date: datetime.date,
-        termination_date: t.Optional[datetime.date],
-    ) -> "Vendor":
+        termination_date: datetime.date | None,
+    ) -> t.Self:
         return cls(
             vendor_id,
             cipher,
@@ -112,14 +120,17 @@ class Drug:
         mf_country_id: int,
         mf_country_name: str,
         mf_name: str,
-    ):
-        return Drug(
+    ) -> t.Self:
+        return cls(
             drug_id,
             DrugGroup(drug_group_id, drug_group_name),
             cipher,
             name,
             Manufacturer.from_primitives(
-                mf_id, mf_country_id, mf_country_name, mf_name
+                mf_id,
+                mf_country_id,
+                mf_country_name,
+                mf_name,
             ),
         )
 
@@ -144,7 +155,7 @@ class Item:
         drug_mf_country_name: str,
         drug_mf_name: str,
         price: float,
-    ) -> "Item":
+    ) -> t.Self:
         return cls(
             item_id,
             Drug.from_primitives(
@@ -168,8 +179,8 @@ class Order:
     user: User
     create_date: datetime.date
     expect_receive_date: datetime.date
-    receive_date: t.Optional[datetime.date] = None
-    cost: t.Optional[float] = 0
+    receive_date: datetime.date | None = None
+    cost: float | None = 0
 
     @classmethod
     def from_primitives(
@@ -184,7 +195,7 @@ class Order:
         expect_receive_date: datetime.date,
         receive_date: t.Optional[datetime.date],
         cost: float,
-    ) -> "Order":
+    ) -> t.Self:
         return cls(
             order_id,
             User(user_id, user_email, user_type, user_name, user_pw_hash),

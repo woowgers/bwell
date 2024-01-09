@@ -18,7 +18,7 @@ def get_db_proxy() -> DBCursor:
     return g.db
 
 
-def get_user_proxy() -> t.Optional[User]:
+def get_user_proxy() -> User | None:
     if "user" not in g:
         user_dict = session.get("user")
         if not user_dict:
@@ -37,5 +37,5 @@ def close_db_proxy(_=None) -> None:
         close_db(db)
 
 
-db: DBCursor = LocalProxy(get_db_proxy)  # type: ignore[Assignment]
-user: User = LocalProxy(get_user_proxy)  # type: ignore[Assignment]
+db: DBCursor = t.cast(DBCursor, LocalProxy(get_db_proxy))
+user: User = t.cast(User, LocalProxy(get_user_proxy))

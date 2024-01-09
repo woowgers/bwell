@@ -6,7 +6,7 @@ from flask import redirect, url_for
 from bwell.helpers.flashes import flash_error
 from bwell.proxies import user
 
-ViewHandler: t.TypeAlias = t.Callable
+type ViewHandler = t.Callable
 
 
 def login_required(handler: ViewHandler) -> ViewHandler:

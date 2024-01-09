@@ -49,16 +49,16 @@
   </div>
 
   <nav>
+      {#
     <a id=logo-link href={{ url_for('read') }}> <img src={{ url_for('static', filename='icon.png') }} /> </a>
     <a href={{ url_for('read') }}> Home </a>
-    <a href={{ url_for('account.all') }}> My account </a>
     <a href={{ url_for('cart.my') }}> Cart </a>
     <a href={{ url_for('pharmacy.all') }}> Pharmacy items </a>
-    <a href={{ url_for('account.all') }}> Other users </a>
     <a href={{ url_for('manufacturer.all') }}> Manufacturers </a>
     <a href={{ url_for('vendor.all') }}> Vendors </a>
     <a href={{ url_for('drug.all') }}> Drugs </a>
     <a href={{ url_for('order.all') }}> Orders </a>
+      #}
     <div id=navbar-spacer> </div>
     {% if user %}
       <a id=navbar-logout-button>
