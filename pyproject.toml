@@ -1,0 +1,60 @@
+[tool.black]
+line-length = 80
+skip-string-normalization = true
+
+[tool.isort]
+py_version = 312
+profile = 'black'
+line_length = 80
+
+[tool.ruff]
+select = ['ALL']
+target-version = 'py312'
+line-length = 80
+indent-width = 4
+ignore = [
+  'ANN001',
+  'ANN101',
+  'ANN201',
+  'ANN202',
+  'ANN204',
+
+  'A002',
+  'A003',
+
+  'B008',
+
+  'C408',
+
+  'D100',
+  'D101',
+  'D102',
+  'D103',
+  'D104',
+  'D105',
+  'D107',
+
+  'FA102',
+
+  'I001',
+
+  'Q000',
+]
+
+[tool.ruff.per-file-ignores]
+'bwell/__main__.py' = [
+  'S104',
+]
+'tests/*' = [
+  'S101',
+  'S105',
+  'S106',
+  'S107',
+  'S311',
+]
+'dockerfiles/*' = [
+  'S603',
+]
+
+[tool.pytest.ini_options]
+addopts = '-p no:warnings'

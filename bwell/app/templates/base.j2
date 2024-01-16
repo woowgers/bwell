@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset='UTF-8'>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link sizes="128x128" rel="icon" type="image/png" href="{{ url_for('static', filename='icon-128x128.png') }}"/>
+  <link sizes="96x96" rel="icon" type="image/png" href="{{ url_for('static', filename='icon-96x96.png') }}"/>
+  <link sizes="48x48" rel="icon" type="image/png" href="{{ url_for('static', filename='icon-48x48.png') }}"/>
+  <link rel=stylesheet href={{ url_for('static', filename='style/css/base.css') }} />
+  <link rel=stylesheet href={{ url_for('static', filename='style/fontawesome/css/all.css') }} />
+  {# #}
+  <title>{% block title %}{% endblock %} - BWell</title>
+</head>
+
+<body>
+
+  <div id=flashes-container>
+
+    {% with errors = get_flashed_messages(category_filter=['error']) %}
+        <div id=error-container>
+            {% for error in errors %}
+              <div class=error-item>
+                <p class=message-paragraph> <i class="fa-solid fa-xmark"></i> {{ error }}
+              </div>
+            {% endfor %}
+        </div>
+    {% endwith %}
+
+    {% with successes = get_flashed_messages(category_filter=['success']) %}
+        <div id=success-container>
+            {% for success in successes %}
+              <div class=success-item>
+                <p class=message-paragraph> <i class="fa-solid fa-check"></i> {{ success }}
+              </div>
+            {% endfor %}
+        </div>
+    {% endwith %}
+
+    {% with infos = get_flashed_messages(category_filter=['info']) %}
+        <div id=info-container>
+            {% for info in infos %}
+              <div class=info-item>
+                <p class=message-paragraph> <i class="fa-solid fa-info"></i> {{ info }}
+              </div>
+            {% endfor %}
+        </div>
+    {% endwith %}
+
+  </div>
+
+  <nav>
+      {#
+    <a id=logo-link href={{ url_for('read') }}> <img src={{ url_for('static', filename='icon.png') }} /> </a>
+    <a href={{ url_for('read') }}> Home </a>
+    <a href={{ url_for('cart.my') }}> Cart </a>
+    <a href={{ url_for('pharmacy.all') }}> Pharmacy items </a>
+    <a href={{ url_for('manufacturer.all') }}> Manufacturers </a>
+    <a href={{ url_for('vendor.all') }}> Vendors </a>
+    <a href={{ url_for('drug.all') }}> Drugs </a>
+    <a href={{ url_for('order.all') }}> Orders </a>
+      #}
+    <div id=navbar-spacer> </div>
+    {% if user %}
+      <a id=navbar-logout-button>
+        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+      </a>
+    {% endif %}
+  </nav>
+
+  <div id=content-container>
+    <h1> {% block header %} {% endblock %} </h1>
+    {% block content %} {% endblock %}
+  </div>
+
+  <datalist id=cipher-datalist>
+    <option value="$UUID">
+  </datalist>
+
+
+  <script type=module src={{ url_for('static', filename='script/flash.js') }}></script>
+  <script type=module src={{ url_for('static', filename='script/navbar-logout-button.js') }}></script>
+  <script type=module src={{ url_for("static", filename="script/close-message-button.js") }}></script>
+
+</body>
+</html>
