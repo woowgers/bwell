@@ -1,3 +1,5 @@
+from flask import Flask
+from flask.testing import FlaskCliRunner, FlaskClient
 import pytest
 
 from bwell.app import create_app
@@ -12,10 +14,10 @@ def app():
 
 
 @pytest.fixture()
-def client(app):
+def client(app: Flask) -> FlaskClient:
     return app.test_client()
 
 
 @pytest.fixture()
-def runner(app):
+def runner(app: Flask) -> FlaskCliRunner:
     return app.test_cli_runner()

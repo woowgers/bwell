@@ -8,9 +8,12 @@ load_dotenv("../../.env")
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
 DATABASE = {
-    "host": os.environ.get("POSTGRES_HOST"),
-    "port": os.environ.get("POSTGRES_PORT"),
-    "database": os.environ.get("POSTGRES_DB"),
-    "user": os.environ.get("POSTGRES_USER"),
-    "password": os.environ.get("POSTGRES_PASSWORD"),
+    key: os.environ.get(environ, default)
+    for key, environ, default in (
+        ('host', 'POSTGRES_HOST', 'localhost'),
+        ('port', 'POSTGRES_PORT', 5432),
+        ('database', 'POSTGRES_DB', 'bwell'),
+        ('user', 'POSTGRES_USER', 'bwell'),
+        ('password', 'POSTGRES_PASSWORD', 'qwe!@#3((!#$))'),
+    )
 }
